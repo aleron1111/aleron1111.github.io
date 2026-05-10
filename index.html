@@ -272,190 +272,79 @@ body{
 .av6{background:linear-gradient(135deg,#608020,#a0c030);}
 .av7{background:linear-gradient(135deg,#205050,#30a0a0);}
 
-/* ── MOBILE BACK BUTTON ── */
-#mob-back{display:none;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid var(--border);color:var(--text);font-size:1.1rem;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .2s;}
-#mob-back:hover{background:rgba(196,77,255,.2);}
+/* ── MOBILE BACK BUTTON (old, kept hidden) ── */
+#mob-back{display:none;}
 
 /* ── MOBILE OVERLAY ── */
-#mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:19;backdrop-filter:blur(3px);}
+#mob-overlay{display:none;}
 
-/* ══════════════════════════════════════
-   TELEGRAM-STYLE MOBILE INTERFACE
-   ══════════════════════════════════════ */
+/* ── FLOATING BACK BUTTON ── */
+#mob-back-float{
+  display:none;
+  position:fixed;
+  top:14px; right:14px;
+  z-index:100;
+  width:40px; height:40px;
+  border-radius:50%;
+  background:var(--accent);
+  border:none;
+  color:#fff;
+  font-size:1.1rem;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  box-shadow:0 4px 18px rgba(196,77,255,.5);
+  transition:transform .15s, box-shadow .15s;
+}
+#mob-back-float:hover{transform:scale(1.1);box-shadow:0 6px 24px rgba(196,77,255,.7);}
+#mob-back-float:active{transform:scale(.93);}
+
 @media(max-width:680px){
-  /* Hide desktop elements */
-  #mob-ham{ display:none !important; }
-  #mob-overlay{ display:none !important; }
+  /* Messages: tighter padding */
+  #msgs{padding:12px 10px;}
 
-  body{ overflow:hidden; }
+  /* Input area: tighter */
+  #ia{padding:8px 10px 12px;}
+  .qr{gap:4px;}
+  .qe{font-size:1.08rem;}
 
-  /* App is a full-screen container with two "pages" */
-  #app{
-    position:relative;
-    overflow:hidden;
-    width:100vw;
-    height:100dvh;
-    display:block !important; /* override flex for mobile */
-  }
+  /* Bubbles: wider on mobile */
+  .mc{max-width:78%;}
 
-  /* ── SIDEBAR becomes the CHAT LIST screen ── */
+  /* Header name truncation */
+  .hn{font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;}
+
+  /* Welcome screen: add top padding */
+  #welc{padding-top:20px;}
+
+  /* Sidebar drawer */
   #sb{
-    position:absolute;
-    top:0; left:0; right:0; bottom:0;
-    width:100%;
-    min-width:0;
-    border-right:none;
-    transform:translateX(0);
-    transition:transform .32s cubic-bezier(.4,0,.2,1);
-    z-index:10;
-    display:flex;
-    flex-direction:column;
+    position:fixed;top:0;left:0;bottom:0;
+    width:82vw;max-width:320px;min-width:0;
+    z-index:20;
+    transform:translateX(-100%);
+    transition:transform .28s cubic-bezier(.4,0,.2,1);
+    box-shadow:6px 0 40px rgba(0,0,0,.6);
+  }
+  #sb.mob-open{transform:translateX(0);}
+  #mob-overlay{display:block;opacity:0;pointer-events:none;transition:opacity .28s;}
+  #mob-overlay.vis{opacity:1;pointer-events:all;}
+  #ca{width:100%;min-width:0;flex:1;}
+  #chdr{padding:10px 13px;}
+
+  /* Hamburger button */
+  #mob-ham{
+    display:flex;width:36px;height:36px;border-radius:50%;
+    background:rgba(255,255,255,.07);border:1px solid var(--border);
+    color:var(--text);font-size:1.1rem;align-items:center;justify-content:center;
+    cursor:pointer;flex-shrink:0;transition:background .2s;
+    position:fixed;top:12px;left:12px;z-index:15;
+    box-shadow:0 2px 12px rgba(0,0,0,.4);
   }
 
-  /* Telegram-style top bar in sidebar */
-  #sbh{
-    padding:0;
-    border-bottom:1.5px solid var(--border);
-    background:var(--panel);
-  }
-
-  /* Mobile top bar inside sidebar header */
-  #sbh::before{
-    content:'';
-    display:block;
-    height:env(safe-area-inset-top, 0px);
-    background:var(--panel);
-  }
-
-  .lr{
-    padding:10px 14px 8px;
-    margin-bottom:0;
-  }
-
-  .lsvg{ width:36px; height:36px; }
-  .lt{ font-size:1.4rem; }
-
-  /* Me card compact */
-  #mec{
-    margin:0 12px 10px;
-    padding:7px 10px;
-    border-radius:10px;
-  }
-
-  /* Search bar */
-  .sw{ padding:6px 12px 8px; }
-  .si input{ font-size:.85rem; padding:9px 12px 9px 34px; }
-
-  /* Tab bar */
-  .stabs{ border-bottom:1.5px solid var(--border); }
-  .stab{ padding:9px 4px; font-size:.65rem; }
-
-  /* Chat list items — taller touch targets */
-  .ui{ padding:11px 14px; }
-  .ua{ width:46px; height:46px; font-size:1.35rem; }
-  .un{ font-size:.9rem; }
-  .up{ font-size:.75rem; }
-
-  /* ── CHAT AREA becomes the CHAT screen ── */
-  #ca{
-    position:absolute;
-    top:0; left:0; right:0; bottom:0;
-    width:100%;
-    display:flex;
-    flex-direction:column;
-    transform:translateX(100%); /* hidden to the right by default */
-    transition:transform .32s cubic-bezier(.4,0,.2,1);
-    z-index:11;
-    background:var(--bg);
-  }
-
-  /* When chat is active: slide chat in, slide list out */
-  #app.mob-chat-open #ca{
-    transform:translateX(0);
-  }
-  #app.mob-chat-open #sb{
-    transform:translateX(-30%);
-    pointer-events:none;
-  }
-
-  /* ── CHAT HEADER — Telegram style ── */
-  #chdr{
-    padding:0 10px;
-    min-height:56px;
-    background:var(--panel);
-    border-bottom:1.5px solid var(--border);
-    display:flex;
-    align-items:center;
-    gap:10px;
-    flex-shrink:0;
-    box-shadow:0 1px 10px rgba(0,0,0,.3);
-  }
-
-  /* Padding for safe area (notch) */
-  #chdr::before{
-    content:'';
-    display:none;
-  }
-
-  /* Back arrow — always shown in mobile chat header */
-  #mob-back{
-    display:flex !important;
-    width:38px; height:38px;
-    background:none;
-    border:none;
-    font-size:1.5rem;
-    color:var(--accent);
-    margin-right:2px;
-  }
-  #mob-back:hover{ background:rgba(196,77,255,.12); }
-
-  .hav{ width:38px; height:38px; font-size:1.15rem; }
-  .hn{ font-size:1rem; max-width:160px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .hs{ font-size:.7rem; }
-
-  /* Action buttons in header */
-  .ha{ gap:4px; }
-  .ib{ width:34px; height:34px; font-size:.95rem; }
-
-  /* ── MESSAGES ── */
-  #msgs{
-    flex:1;
-    padding:10px 8px 6px;
-    overflow-y:auto;
-    -webkit-overflow-scrolling:touch;
-  }
-
-  .mc{ max-width:80%; }
-  .bub{ font-size:.88rem; padding:8px 12px; }
-
-  /* ── INPUT AREA ── */
-  #ia{
-    padding:6px 8px 10px;
-    padding-bottom:calc(6px + env(safe-area-inset-bottom, 0px));
-    border-top:1.5px solid var(--border);
-    background:var(--panel);
-  }
-
-  .qr{ gap:3px; padding-bottom:5px; }
-  .qe{ font-size:1.05rem; }
-
-  .ir{ gap:8px; }
-  #mi2{
-    font-size:.9rem;
-    padding:10px 14px;
-    border-radius:24px;
-    max-height:100px;
-  }
-  #sb2{ width:42px; height:42px; font-size:1.1rem; }
-
-  /* Typing indicator */
-  #tyb{ padding:0 12px 2px; font-size:.75rem; min-height:20px; }
-
-  /* Welcome screen hidden on mobile (list is the "welcome") */
-  #welc{ display:none !important; }
-
-  /* Sidebar section label */
-  .sl{ padding:8px 14px 3px; font-size:.6rem; }
+  /* Push chat header right so it doesn't overlap hamburger */
+  #chdr{ padding-left:58px; }
+  #welc{ padding-top:60px; }
 }
 </style>
 </head>
@@ -463,6 +352,7 @@ body{
 <div id="bgp"></div>
 <div id="mob-overlay" onclick="closeSidebar()"></div>
 <button id="mob-ham" onclick="openSidebar()" style="display:none">☰</button>
+<button id="mob-back-float" onclick="mobGoBack()" title="Назад до чатів">‹</button>
 
 <!-- FIREBASE NOTICE -->
 <div id="firebase-notice">
@@ -961,6 +851,7 @@ function activateUI(name, emoji, avc, status) {
   hav.textContent = emoji; hav.className = `hav ${avc}`;
   document.getElementById('h-nm').textContent = name;
   document.getElementById('h-st').textContent = status;
+  showMobBack(true);
 }
 
 // ═══════════════════════════
@@ -1144,63 +1035,51 @@ function rnd(a) { return a[~~(Math.random()*a.length)]; }
 function nows() { const d=new Date(); return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0'); }
 let toastT; function toast(m) { const el=document.getElementById('toast'); el.textContent=m; el.style.display='block'; clearTimeout(toastT); toastT=setTimeout(()=>{el.style.display='none';},3200); }
 
-// ═══════════════════════════════════════
-// TELEGRAM-STYLE MOBILE NAVIGATION
-// ═══════════════════════════════════════
+// ═══════════════════════════
+// MOBILE UI
+// ═══════════════════════════
 function isMobile(){ return window.innerWidth <= 680; }
 
-// Open chat view (slide list left, chat in from right)
-function openChatMobile(){
+function openSidebar(){
   if(!isMobile()) return;
-  document.getElementById('app').classList.add('mob-chat-open');
+  document.getElementById('sb').classList.add('mob-open');
+  document.getElementById('mob-overlay').classList.add('vis');
 }
-
-// Go back to chat list (slide chat out, list back in)
 function closeSidebar(){
-  if(!isMobile()) return;
-  document.getElementById('app').classList.remove('mob-chat-open');
+  document.getElementById('sb').classList.remove('mob-open');
+  document.getElementById('mob-overlay').classList.remove('vis');
 }
-
-// Legacy aliases (kept for any existing calls)
-function openSidebar(){ closeSidebar(); }
-
-// Back button: go back to list
-document.getElementById('mob-back').addEventListener('click', closeSidebar);
-
-// Swipe-right to go back
-(function(){
-  let startX=0, startY=0;
-  const ca = document.getElementById('ca');
-  ca.addEventListener('touchstart', e=>{
-    startX = e.touches[0].clientX;
-    startY = e.touches[0].clientY;
-  }, {passive:true});
-  ca.addEventListener('touchend', e=>{
-    const dx = e.changedTouches[0].clientX - startX;
-    const dy = Math.abs(e.changedTouches[0].clientY - startY);
-    if(dx > 60 && dy < 60 && startX < 40) closeSidebar();
-  }, {passive:true});
-})();
 
 function syncMobileUI(){
-  if(!isMobile()){
-    document.getElementById('app').classList.remove('mob-chat-open');
+  const ham = document.getElementById('mob-ham');
+  if(isMobile()){
+    ham.style.display = 'flex';
+  } else {
+    ham.style.display = 'none';
+    closeSidebar();
+    showMobBack(false);
   }
 }
 window.addEventListener('resize', syncMobileUI);
+window.addEventListener('load', syncMobileUI);
 
-// Patch activateUI to open chat on mobile
-const _origActivateUI = activateUI;
-window.__activateUI_patched = true;
-// Override via reassignment (avoids hoisting issues)
-const activateUI_orig = activateUI;
-// We patch openDM/openRoom/openBot directly instead:
-const _openDM_orig = openDM;
-const _openRoom_orig = openRoom;
-const _openBot_orig = openBot;
-function openDM(u){ _openDM_orig(u); if(isMobile()) openChatMobile(); }
-function openRoom(r){ _openRoom_orig(r); if(isMobile()) openChatMobile(); }
-function openBot(b){ _openBot_orig(b); if(isMobile()) openChatMobile(); }
+// Floating back button
+function showMobBack(show){
+  const btn = document.getElementById('mob-back-float');
+  if(!btn) return;
+  btn.style.display = (show && isMobile()) ? 'flex' : 'none';
+}
+
+function mobGoBack(){
+  document.getElementById('chdr').style.display = 'none';
+  document.getElementById('msgs').style.display = 'none';
+  document.getElementById('tyb').style.display  = 'none';
+  document.getElementById('ia').style.display   = 'none';
+  document.getElementById('welc').style.display = 'flex';
+  showMobBack(false);
+  document.querySelectorAll('.ui.active').forEach(el=>el.classList.remove('active'));
+  currentChat = null;
+}
 
 // Enter on auth
 document.addEventListener('keydown',e=>{
