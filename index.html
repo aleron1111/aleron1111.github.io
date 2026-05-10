@@ -276,76 +276,147 @@ body{
 .av6{background:linear-gradient(135deg,#608020,#a0c030);}
 .av7{background:linear-gradient(135deg,#205050,#30a0a0);}
 
-@media(max-width:600px){
-  /* Sidebar becomes a full bottom navigation replacement */
-  body{flex-direction:column;}
-  #app{flex-direction:column;height:100vh;height:-webkit-fill-available;}
+/* ══════════════════════════════════
+   MOBILE — burger drawer (Telegram-style)
+   ══════════════════════════════════ */
+#mob-ham{display:none;}
 
-  /* Sidebar on top, compact */
-  #sb{
-    width:100%;min-width:0;
-    border-right:none;border-bottom:2px solid var(--border);
-    height:auto;flex-shrink:0;
+@media(max-width:700px){
+
+  /* ── Body & App ── */
+  html,body{height:100%;height:-webkit-fill-available;overflow:hidden;}
+  #app{
+    position:fixed;inset:0;
+    width:100%;height:100%;
     display:flex;flex-direction:column;
-    max-height:45vh;
+    overflow:hidden;
   }
 
-  /* Hide logo text, keep avatar */
-  .lt,.ls{display:none;}
-  .lr{margin-bottom:0;}
-  .lsvg{width:32px;height:32px;}
+  /* ── Sidebar: slide-in drawer, starts hidden ── */
+  #sb{
+    position:fixed;
+    top:0;left:0;bottom:0;
+    width:80vw;max-width:300px;
+    z-index:30;
+    transform:translateX(-100%);
+    transition:transform .28s cubic-bezier(.4,0,.2,1);
+    background:var(--panel2);
+    border-right:2px solid var(--border);
+    box-shadow:none;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  #sb.open{
+    transform:translateX(0);
+    box-shadow:4px 0 30px rgba(0,0,0,.6);
+  }
 
-  /* Compact user info bar */
-  #mec{padding:6px 10px;}
-  .mi{min-width:0;}
-  .mn{font-size:.8rem;}
-  .ms{font-size:.65rem;}
-  .lo{font-size:.65rem;padding:3px 7px;}
+  /* ── Dark tap-to-close area ── */
+  #mob-dim{
+    display:none;
+    position:fixed;inset:0;
+    background:rgba(0,0,0,.5);
+    z-index:29;
+  }
+  #mob-dim.show{display:block;}
 
-  /* Tabs smaller */
-  .stab{font-size:.65rem;padding:8px 2px;}
+  /* ── Burger button ── */
+  #mob-ham{
+    display:flex;
+    position:fixed;
+    top:10px;left:10px;
+    z-index:25;
+    width:40px;height:40px;
+    border-radius:50%;
+    background:var(--panel2);
+    border:1.5px solid var(--border);
+    color:var(--text);
+    font-size:1.1rem;
+    align-items:center;justify-content:center;
+    cursor:pointer;
+    box-shadow:0 2px 12px rgba(0,0,0,.5);
+    -webkit-tap-highlight-color:transparent;
+  }
 
-  /* Search compact */
-  .sw{padding:6px 8px;}
+  /* ── Chat area: full screen ── */
+  #ca{
+    flex:1;
+    display:flex;flex-direction:column;
+    width:100%;min-height:0;
+    overflow:hidden;
+  }
 
-  /* List scrollable */
-  .ls-sec{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
-  .ui{padding:8px 10px;}
-  .ua{width:34px;height:34px;font-size:1rem;}
-  .un{font-size:.8rem;}
-  .up{font-size:.67rem;}
-  .sl{padding:5px 10px 2px;font-size:.58rem;}
+  /* ── Chat header ── */
+  #chdr{
+    padding:10px 10px 10px 60px; /* left space for burger */
+    flex-shrink:0;
+    gap:8px;
+  }
+  .hn{font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:45vw;}
+  .hs{font-size:.68rem;}
+  .hav{width:36px;height:36px;font-size:1.1rem;}
+  .ib{width:32px;height:32px;font-size:.85rem;}
+  .ha{gap:5px;}
 
-  /* Chat area takes remaining space */
-  #ca{flex:1;min-height:0;display:flex;flex-direction:column;}
-  #msgs{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px 8px;}
+  /* ── Welcome screen ── */
+  #welc{
+    padding-top:70px;
+    padding-left:16px;padding-right:16px;
+  }
+  #welc h2{font-size:1.3rem;}
+  #welc p{font-size:.82rem;}
 
-  /* Bubbles fix */
-  .mc{max-width:80%;}
-  .bub{font-size:.84rem;word-break:break-word;overflow-wrap:anywhere;}
-  .mr{max-width:100%;}
+  /* ── Messages ── */
+  #msgs{
+    flex:1;
+    overflow-y:auto;overflow-x:hidden;
+    padding:10px 8px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .mc{max-width:78%;}
+  .bub{font-size:.85rem;padding:8px 12px;word-break:break-word;overflow-wrap:anywhere;}
+  .mav2{width:26px;height:26px;font-size:.82rem;}
+  .mt{font-size:.6rem;}
+  .msn{font-size:.63rem;}
 
-  /* Input area */
-  #ia{padding:6px 8px 10px;padding-bottom:max(10px,env(safe-area-inset-bottom));}
-  .qr{gap:3px;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none;}
+  /* ── Typing bar ── */
+  #tyb{padding:2px 10px;flex-shrink:0;font-size:.72rem;}
+
+  /* ── Input area ── */
+  #ia{
+    flex-shrink:0;
+    padding:7px 8px;
+    padding-bottom:max(env(safe-area-inset-bottom),8px);
+    border-top:2px solid var(--border);
+  }
+  .qr{
+    gap:3px;padding-bottom:5px;
+    overflow-x:auto;flex-wrap:nowrap;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
   .qr::-webkit-scrollbar{display:none;}
   .qe{font-size:1.1rem;flex-shrink:0;}
-  #mi2{font-size:.88rem;padding:9px 12px;}
-  #sb2{width:40px;height:40px;}
+  .ir{gap:7px;}
+  #mi2{font-size:.88rem;padding:9px 12px;border-radius:20px;}
+  #sb2{width:40px;height:40px;font-size:1rem;flex-shrink:0;}
 
-  /* Header */
-  #chdr{padding:8px 10px;}
-  .hn{font-size:.95rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:40vw;}
-  .ib{width:32px;height:32px;font-size:.85rem;}
+  /* ── Toast ── */
+  #toast{
+    bottom:max(calc(env(safe-area-inset-bottom)+60px),70px);
+    right:12px;left:12px;max-width:none;text-align:center;
+  }
 
-  /* Toast */
-  #toast{bottom:70px;right:10px;left:10px;max-width:none;text-align:center;}
+  /* ── Auth/Setup screens ── */
+  .ac,.sc{width:90vw;max-width:380px;padding:26px 18px;}
 }
 </style>
 
 </head>
 <body>
 <div id="bgp"></div>
+<button id="mob-ham" onclick="mobOpen()" aria-label="Menu">☰</button>
+<div id="mob-dim" onclick="mobClose()"></div>
 
 <!-- FIREBASE NOTICE -->
 
@@ -1033,6 +1104,23 @@ function esc(s) { if(!s) return ''; return String(s).replace(/&/g,'&amp;').repla
 function rnd(a) { return a[~~(Math.random()*a.length)]; }
 function nows() { const d=new Date(); return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0'); }
 let toastT; function toast(m) { const el=document.getElementById('toast'); el.textContent=m; el.style.display='block'; clearTimeout(toastT); toastT=setTimeout(()=>{el.style.display='none';},3200); }
+
+// ── MOBILE BURGER ──
+function mobOpen(){
+  document.getElementById('sb').classList.add('open');
+  document.getElementById('mob-dim').classList.add('show');
+}
+function mobClose(){
+  document.getElementById('sb').classList.remove('open');
+  document.getElementById('mob-dim').classList.remove('show');
+}
+function isMob(){ return window.innerWidth <= 700; }
+
+// Close sidebar when chat is opened on mobile
+const _oDM = openDM, _oR = openRoom, _oB = openBot;
+openDM   = function(u){ _oDM(u);   if(isMob()) mobClose(); };
+openRoom = function(r){ _oR(r);    if(isMob()) mobClose(); };
+openBot  = function(b){ _oB(b);    if(isMob()) mobClose(); };
 
 // Enter on auth
 document.addEventListener('keydown',e=>{
