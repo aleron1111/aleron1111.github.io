@@ -13,7 +13,7 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, si
 import { getDatabase, ref, push, set, get, onValue, onChildAdded, serverTimestamp, query, orderByChild, limitToLast, off } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 // ═══════════════════════════════════════════════
-// 🔥 FIREBASE CONFIG — REPLACE WITH YOUR OWN!
+// 🔥 FIREBASE CONFIG — REPLACE WITH YOUR OWN! 
 // Get it free at: https://console.firebase.google.com
 // ═══════════════════════════════════════════════
 const firebaseConfig = {
