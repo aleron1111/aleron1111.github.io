@@ -282,7 +282,7 @@ body{
 #mob-back:active{background:rgba(196,77,255,.3);}
 
 /* ── MOBILE OVERLAY ── */
-#mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:19;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);}
+#mob-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:19;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:0;pointer-events:none;visibility:hidden;transition:opacity .3s,visibility .3s;}
 
 /* ── MOBILE HAMBURGER (hidden on desktop) ── */
 #mob-ham{display:none;}
@@ -323,9 +323,9 @@ body{
   /* Sidebar header padding */
   #sbh{padding:14px 14px 12px;}
 
-  /* Overlay */
-  #mob-overlay{display:block;opacity:0;pointer-events:none;transition:opacity .3s;}
-  #mob-overlay.vis{opacity:1;pointer-events:all;}
+  /* Overlay — hidden by default, shown only when sidebar open */
+  #mob-overlay{display:block;opacity:0;pointer-events:none;transition:opacity .3s;visibility:hidden;}
+  #mob-overlay.vis{opacity:1;pointer-events:all;visibility:visible;}
 
   /* Chat area: full width */
   #ca{
