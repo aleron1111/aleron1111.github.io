@@ -3,9 +3,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#0f0a1a">
 <title>🍆 DickChat — Real Messenger</title>
 <link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
@@ -77,8 +76,8 @@ body{
 
 /* ── FIREBASE NOTICE ── */
 #firebase-notice{
-  position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.95);
-  display:flex;align-items:center;justify-content:center;
+  position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.92);
+  display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);
 }
 .nc{
   background:var(--panel);border:2px solid var(--accent3);border-radius:24px;
@@ -277,187 +276,76 @@ body{
 .av6{background:linear-gradient(135deg,#608020,#a0c030);}
 .av7{background:linear-gradient(135deg,#205050,#30a0a0);}
 
-/* ── MOBILE BACK BUTTON ── */
-#mob-back{display:none;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid var(--border);color:var(--text);font-size:1.3rem;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .2s;-webkit-tap-highlight-color:transparent;}
-#mob-back:active{background:rgba(196,77,255,.3);}
+@media(max-width:600px){
+  /* Sidebar becomes a full bottom navigation replacement */
+  body{flex-direction:column;}
+  #app{flex-direction:column;height:100vh;height:-webkit-fill-available;}
 
-/* ── MOBILE OVERLAY ── */
-#mob-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:19;transition:opacity .3s;}
-
-/* ── MOBILE HAMBURGER (hidden on desktop) ── */
-#mob-ham{display:none;}
-
-@media(max-width:768px){
-  /* iOS safe area support */
-  html{height:-webkit-fill-available;}
-  body{
-    height:100vh;
-    height:-webkit-fill-available;
-    min-height:-webkit-fill-available;
-    overflow:hidden;
-  }
-
-  /* Full screen app */
-  #app{
-    position:fixed;inset:0;
-    width:100vw;height:100%;
-    height:-webkit-fill-available;
-    display:flex;flex-direction:column;
-    overflow:hidden;
-  }
-
-  /* ── SIDEBAR: full-screen drawer, HIDDEN by default ── */
+  /* Sidebar on top, compact */
   #sb{
-    position:fixed;
-    top:0;left:0;bottom:0;
-    width:100vw;max-width:100vw;min-width:0;
-    z-index:20;
-    transform:translateX(-100%);
-    transition:transform .3s cubic-bezier(.4,0,.2,1);
-    box-shadow:none;
-    padding-top:max(env(safe-area-inset-top), 0px);
-  }
-  #sb.mob-open{
-    transform:translateX(0);
-    box-shadow:none;
-  }
-
-  /* Sidebar header padding */
-  #sbh{padding:14px 14px 12px;}
-
-  /* Overlay created dynamically by JS when sidebar opens */
-
-  /* Chat area: full width */
-  #ca{
-    width:100%;flex:1;
+    width:100%;min-width:0;
+    border-right:none;border-bottom:2px solid var(--border);
+    height:auto;flex-shrink:0;
     display:flex;flex-direction:column;
-    min-width:0;min-height:0;
-    overflow:hidden;
+    max-height:45vh;
   }
 
-  /* ── CHAT HEADER ── */
-  #chdr{
-    padding:10px 12px;
-    padding-top:max(calc(env(safe-area-inset-top) + 8px), 10px);
-    min-height:56px;flex-shrink:0;
-    gap:10px;
-  }
-  #mob-back{display:flex;}
+  /* Hide logo text, keep avatar */
+  .lt,.ls{display:none;}
+  .lr{margin-bottom:0;}
+  .lsvg{width:32px;height:32px;}
 
-  /* ── HAMBURGER BUTTON (fixed, above everything) ── */
-  #mob-ham{
-    display:flex;
-    position:fixed;
-    top:max(calc(env(safe-area-inset-top) + 10px), 12px);
-    left:14px;
-    z-index:25;
-    width:42px;height:42px;border-radius:50%;
-    background:rgba(15,10,26,.85);
-    border:1.5px solid var(--border);
-    color:var(--text);font-size:1.15rem;
-    align-items:center;justify-content:center;
-    cursor:pointer;
-    box-shadow:0 2px 16px rgba(0,0,0,.5);
-    -webkit-tap-highlight-color:transparent;
-    transition:background .2s;
-  }
-  #mob-ham:active{background:rgba(196,77,255,.3);}
+  /* Compact user info bar */
+  #mec{padding:6px 10px;}
+  .mi{min-width:0;}
+  .mn{font-size:.8rem;}
+  .ms{font-size:.65rem;}
+  .lo{font-size:.65rem;padding:3px 7px;}
 
-  /* ── WELCOME screen ── */
-  #welc{
-    padding-top:max(calc(env(safe-area-inset-top) + 50px), 70px);
-    padding-bottom:max(env(safe-area-inset-bottom), 20px);
-  }
+  /* Tabs smaller */
+  .stab{font-size:.65rem;padding:8px 2px;}
 
-  /* ── MESSAGES ── */
-  #msgs{
-    flex:1;
-    overflow-y:auto;overflow-x:hidden;
-    padding:12px 10px;
-    -webkit-overflow-scrolling:touch;
-  }
-  /* No bubble overflow */
+  /* Search compact */
+  .sw{padding:6px 8px;}
+
+  /* List scrollable */
+  .ls-sec{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+  .ui{padding:8px 10px;}
+  .ua{width:34px;height:34px;font-size:1rem;}
+  .un{font-size:.8rem;}
+  .up{font-size:.67rem;}
+  .sl{padding:5px 10px 2px;font-size:.58rem;}
+
+  /* Chat area takes remaining space */
+  #ca{flex:1;min-height:0;display:flex;flex-direction:column;}
+  #msgs{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:10px 8px;}
+
+  /* Bubbles fix */
+  .mc{max-width:80%;}
+  .bub{font-size:.84rem;word-break:break-word;overflow-wrap:anywhere;}
   .mr{max-width:100%;}
-  .mc{max-width:82%;}
-  .bub{word-break:break-word;overflow-wrap:anywhere;font-size:.85rem;}
 
-  /* ── TYPING INDICATOR ── */
-  #tyb{padding:2px 12px 2px;flex-shrink:0;}
-
-  /* ── INPUT AREA ── */
-  #ia{
-    padding:8px 10px;
-    padding-bottom:max(calc(env(safe-area-inset-bottom) + 6px), 10px);
-    flex-shrink:0;
-  }
-  .qr{
-    gap:3px;padding-bottom:6px;
-    overflow-x:auto;flex-wrap:nowrap;
-    -webkit-overflow-scrolling:touch;
-    scrollbar-width:none;
-  }
+  /* Input area */
+  #ia{padding:6px 8px 10px;padding-bottom:max(10px,env(safe-area-inset-bottom));}
+  .qr{gap:3px;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none;}
   .qr::-webkit-scrollbar{display:none;}
-  .qe{font-size:1.15rem;flex-shrink:0;}
-  .ir{gap:8px;}
-  #mi2{font-size:.9rem;padding:10px 13px;border-radius:20px;}
-  #sb2{width:42px;height:42px;font-size:1.1rem;flex-shrink:0;}
+  .qe{font-size:1.1rem;flex-shrink:0;}
+  #mi2{font-size:.88rem;padding:9px 12px;}
+  #sb2{width:40px;height:40px;}
 
-  /* ── HEADER text ── */
-  .hn{font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:55vw;}
-  .hs{font-size:.67rem;}
-  .ha{gap:6px;}
-  .ib{width:34px;height:34px;font-size:.9rem;}
+  /* Header */
+  #chdr{padding:8px 10px;}
+  .hn{font-size:.95rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:40vw;}
+  .ib{width:32px;height:32px;font-size:.85rem;}
 
-  /* ── AUTH/SETUP screens ── */
-  .ac,.sc{
-    width:92vw;max-width:400px;
-    padding:28px 20px;
-  }
-
-  /* ── FIREBASE NOTICE ── */
-  .nc{width:94vw;padding:24px 18px;}
-  .nc h2{font-size:1.3rem;}
-  .nc p,.nc ol li{font-size:.8rem;}
-
-  /* ── SIDEBAR LIST items ── */
-  .ui{padding:10px 12px;}
-  .ua{width:38px;height:38px;font-size:1.1rem;}
-  .un{font-size:.83rem;}
-  .up{font-size:.7rem;}
-
-  /* ── TOAST ── */
-  #toast{
-    bottom:max(calc(env(safe-area-inset-bottom) + 70px), 80px);
-    right:14px;left:14px;
-    max-width:none;text-align:center;
-  }
-}
-
-/* ── iPhone SE (375px) extra tweaks ── */
-@media(max-width:390px){
-  .mc{max-width:85%;}
-  .bub{font-size:.82rem;padding:8px 11px;}
-  #mi2{font-size:.85rem;}
-  .hn{max-width:50vw;}
-  .qe{font-size:1.05rem;}
-  .ac,.sc{padding:22px 16px;}
-}
-
-/* ── Landscape iPhone ── */
-@media(max-width:768px) and (orientation:landscape){
-  #sb{width:60vw;}
-  #chdr{padding-top:10px;}
-  #mob-ham{top:10px;}
-  #welc{padding-top:50px;}
-  #ia{padding-bottom:8px;}
-  .qr{display:none;}
+  /* Toast */
+  #toast{bottom:70px;right:10px;left:10px;max-width:none;text-align:center;}
 }
 </style>
 
 </head>
 <body>
 <div id="bgp"></div>
-<button id="mob-ham" onclick="openSidebar()" style="display:none">☰</button>
 
 <!-- FIREBASE NOTICE -->
 
@@ -606,12 +494,10 @@ body{
       </svg>
       <h2>Обери чат щоб розпочати 🚀</h2>
       <p>Вибери реального юзера, публічну кімнату або чатни з AI-ботом.</p>
-      <p id="welc-mob-hint" style="display:none;font-size:.8rem;color:var(--accent);margin-top:4px">Натисни ☰ щоб відкрити список чатів</p>
     </div>
 
 ```
 <div id="chdr" style="display:none">
-  <div id="mob-back" onclick="openSidebar()" title="Назад">‹</div>
   <div class="hav" id="h-av">?</div>
   <div><div class="hn" id="h-nm">Name</div><div class="hs" id="h-st">Online</div></div>
   <div class="ha">
@@ -937,7 +823,6 @@ function openDM(user) {
   activateUI(user.displayName, user.emoji, AVC[user.colorIdx||0], user.online?'🟢 Онлайн':'⚫ Офлайн');
   listenFbMsgs('dms/'+id);
   renderUsers();
-  if(isMobile()) closeSidebar();
 }
 
 function openRoom(r) {
@@ -945,7 +830,6 @@ function openRoom(r) {
   activateUI(r.name, r.emoji, 'av0', r.desc);
   listenFbMsgs('rooms/'+r.id);
   buildRooms();
-  if(isMobile()) closeSidebar();
 }
 
 function openBot(b) {
@@ -954,7 +838,6 @@ function openBot(b) {
   activateUI(b.name+' 🤖', b.emoji, AVC[b.col], 'AI • Завжди онлайн');
   renderBotMsgs();
   buildBots();
-  if(isMobile()) closeSidebar();
 }
 
 function activateUI(name, emoji, avc, status) {
@@ -1150,46 +1033,6 @@ function esc(s) { if(!s) return ''; return String(s).replace(/&/g,'&amp;').repla
 function rnd(a) { return a[~~(Math.random()*a.length)]; }
 function nows() { const d=new Date(); return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0'); }
 let toastT; function toast(m) { const el=document.getElementById('toast'); el.textContent=m; el.style.display='block'; clearTimeout(toastT); toastT=setTimeout(()=>{el.style.display='none';},3200); }
-
-// ═══════════════════════════
-// MOBILE SIDEBAR
-// ═══════════════════════════
-function isMobile(){ return window.innerWidth <= 768; }
-
-function openSidebar(){
-  if(!isMobile()) return;
-  document.getElementById('sb').classList.add('mob-open');
-  // Create overlay fresh each time
-  let ov = document.getElementById('mob-overlay');
-  if(!ov){
-    ov = document.createElement('div');
-    ov.id = 'mob-overlay';
-    ov.onclick = closeSidebar;
-    document.body.appendChild(ov);
-  }
-}
-
-function closeSidebar(){
-  document.getElementById('sb').classList.remove('mob-open');
-  // Remove overlay from DOM completely
-  const ov = document.getElementById('mob-overlay');
-  if(ov) ov.remove();
-}
-
-function syncMobileUI(){
-  const ham = document.getElementById('mob-ham');
-  const hint = document.getElementById('welc-mob-hint');
-  if(isMobile()){
-    ham.style.display = 'flex';
-    if(hint) hint.style.display = 'block';
-  } else {
-    ham.style.display = 'none';
-    if(hint) hint.style.display = 'none';
-    closeSidebar();
-  }
-}
-window.addEventListener('resize', syncMobileUI);
-window.addEventListener('load', syncMobileUI);
 
 // Enter on auth
 document.addEventListener('keydown',e=>{
