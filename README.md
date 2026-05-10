@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -7,6 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
 
 <!-- Firebase SDK -->
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -327,11 +329,16 @@ body{
 
   /* Bubbles: wider on mobile */
   .mc{max-width:78%;}
+  /* Fix overflow */
+  #msgs{overflow-x:hidden;}
+  .mr{max-width:100%;}
+  .bub{word-break:break-word;overflow-wrap:anywhere;}
 
   /* Header name truncation */
   .hn{font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;}
 }
 </style>
+
 </head>
 <body>
 <div id="bgp"></div>
@@ -339,6 +346,7 @@ body{
 <button id="mob-ham" onclick="openSidebar()" style="display:none">☰</button>
 
 <!-- FIREBASE NOTICE -->
+
 <div id="firebase-notice">
   <div class="nc">
     <h2>⚙️ Потрібно налаштувати Firebase</h2>
@@ -359,6 +367,7 @@ body{
 </div>
 
 <!-- AUTH SCREEN -->
+
 <div id="auth-screen">
   <div class="ac">
     <div class="al">
@@ -396,6 +405,7 @@ body{
 </div>
 
 <!-- SETUP SCREEN -->
+
 <div id="setup-screen">
   <div class="sc">
     <div style="font-size:3rem;margin-bottom:8px">🎉</div>
@@ -413,6 +423,7 @@ body{
 </div>
 
 <!-- MAIN APP -->
+
 <div id="app">
   <!-- SIDEBAR -->
   <div id="sb">
@@ -442,31 +453,35 @@ body{
       </div>
     </div>
 
-    <div class="stabs">
-      <div class="stab active" id="st-ppl" onclick="swSidTab('ppl')">👥 Люди</div>
-      <div class="stab" id="st-rms" onclick="swSidTab('rms')">📢 Кімнати</div>
-      <div class="stab" id="st-bot" onclick="swSidTab('bot')">🤖 Боти</div>
-    </div>
+```
+<div class="stabs">
+  <div class="stab active" id="st-ppl" onclick="swSidTab('ppl')">👥 Люди</div>
+  <div class="stab" id="st-rms" onclick="swSidTab('rms')">📢 Кімнати</div>
+  <div class="stab" id="st-bot" onclick="swSidTab('bot')">🤖 Боти</div>
+</div>
 
-    <div class="sw"><div class="si"><input type="text" placeholder="Пошук..." id="srch" oninput="doSearch(this.value)"></div></div>
+<div class="sw"><div class="si"><input type="text" placeholder="Пошук..." id="srch" oninput="doSearch(this.value)"></div></div>
 
-    <div class="ls-sec" id="tab-ppl">
-      <div class="sl">Реальні юзери</div>
-      <div id="ul"><div style="padding:16px;text-align:center;color:var(--text-dim);font-size:.82rem">Завантаження…</div></div>
-    </div>
+<div class="ls-sec" id="tab-ppl">
+  <div class="sl">Реальні юзери</div>
+  <div id="ul"><div style="padding:16px;text-align:center;color:var(--text-dim);font-size:.82rem">Завантаження…</div></div>
+</div>
 
-    <div class="ls-sec" id="tab-rms" style="display:none">
-      <div class="sl">Публічні кімнати</div>
-      <div id="rl"></div>
-    </div>
+<div class="ls-sec" id="tab-rms" style="display:none">
+  <div class="sl">Публічні кімнати</div>
+  <div id="rl"></div>
+</div>
 
-    <div class="ls-sec" id="tab-bot" style="display:none">
-      <div class="sl">AI Компаньйони</div>
-      <div id="bl"></div>
-    </div>
+<div class="ls-sec" id="tab-bot" style="display:none">
+  <div class="sl">AI Компаньйони</div>
+  <div id="bl"></div>
+</div>
+```
+
   </div>
 
   <!-- CHAT AREA -->
+
   <div id="ca">
     <div id="welc">
       <svg width="80" height="90" viewBox="0 0 80 90" fill="none">
@@ -479,38 +494,41 @@ body{
       <p>Вибери реального юзера, публічну кімнату або чатни з AI-ботом.</p>
     </div>
 
-    <div id="chdr" style="display:none">
-      <div id="mob-back" onclick="openSidebar()" title="Назад">‹</div>
-      <div class="hav" id="h-av">?</div>
-      <div><div class="hn" id="h-nm">Name</div><div class="hs" id="h-st">Online</div></div>
-      <div class="ha">
-        <div class="ib" title="Штовхнути" onclick="poke()">👉</div>
-        <div class="ib" title="Очистити вид" onclick="clearView()">🗑️</div>
-      </div>
-    </div>
+```
+<div id="chdr" style="display:none">
+  <div id="mob-back" onclick="openSidebar()" title="Назад">‹</div>
+  <div class="hav" id="h-av">?</div>
+  <div><div class="hn" id="h-nm">Name</div><div class="hs" id="h-st">Online</div></div>
+  <div class="ha">
+    <div class="ib" title="Штовхнути" onclick="poke()">👉</div>
+    <div class="ib" title="Очистити вид" onclick="clearView()">🗑️</div>
+  </div>
+</div>
 
-    <div id="msgs" style="display:none"></div>
-    <div id="tyb" style="display:none"></div>
+<div id="msgs" style="display:none"></div>
+<div id="tyb" style="display:none"></div>
 
-    <div id="ia" style="display:none">
-      <div class="qr">
-        <span class="qe" onclick="qi('🍆')">🍆</span>
-        <span class="qe" onclick="qi('🍑')">🍑</span>
-        <span class="qe" onclick="qi('💦')">💦</span>
-        <span class="qe" onclick="qi('🌶️')">🌶️</span>
-        <span class="qe" onclick="qi('🔥')">🔥</span>
-        <span class="qe" onclick="qi('😈')">😈</span>
-        <span class="qe" onclick="qi('❤️')">❤️</span>
-        <span class="qe" onclick="qi('😂')">😂</span>
-        <span class="qe" onclick="qi('💀')">💀</span>
-        <span class="qe" onclick="qi('🎉')">🎉</span>
-      </div>
-      <div class="ir">
-        <textarea id="mi2" placeholder="Написати повідомлення… 🍆" rows="1"
-          onkeydown="hkey(event)" oninput="agrow(this);onTyp()"></textarea>
-        <button id="sb2" onclick="sendMsg()">➤</button>
-      </div>
-    </div>
+<div id="ia" style="display:none">
+  <div class="qr">
+    <span class="qe" onclick="qi('🍆')">🍆</span>
+    <span class="qe" onclick="qi('🍑')">🍑</span>
+    <span class="qe" onclick="qi('💦')">💦</span>
+    <span class="qe" onclick="qi('🌶️')">🌶️</span>
+    <span class="qe" onclick="qi('🔥')">🔥</span>
+    <span class="qe" onclick="qi('😈')">😈</span>
+    <span class="qe" onclick="qi('❤️')">❤️</span>
+    <span class="qe" onclick="qi('😂')">😂</span>
+    <span class="qe" onclick="qi('💀')">💀</span>
+    <span class="qe" onclick="qi('🎉')">🎉</span>
+  </div>
+  <div class="ir">
+    <textarea id="mi2" placeholder="Написати повідомлення… 🍆" rows="1"
+      onkeydown="hkey(event)" oninput="agrow(this);onTyp()"></textarea>
+    <button id="sb2" onclick="sendMsg()">➤</button>
+  </div>
+</div>
+```
+
   </div>
 </div>
 
@@ -1064,5 +1082,6 @@ document.addEventListener('keydown',e=>{
   else doRegister();
 });
 </script>
+
 </body>
 </html>
