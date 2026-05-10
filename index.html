@@ -70,8 +70,8 @@ body{
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
 
 /* BG */
-#bgp{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;clip-path:inset(0);}
-#bgp span{position:absolute;opacity:.04;animation:fup linear infinite;font-size:1.8rem;}
+#bgp{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+#bgp span{position:absolute;opacity:.04;animation:fup linear infinite;font-size:1.8rem;will-change:transform;}
 @keyframes fup{from{transform:translateY(110vh) rotate(0deg);}to{transform:translateY(-10vh) rotate(360deg);}}
 
 /* ── FIREBASE NOTICE ── */
@@ -340,10 +340,11 @@ body{
 
   /* ── Chat area: full screen ── */
   #ca{
-    flex:1;
+    position:fixed;
+    inset:0;
     display:flex;flex-direction:column;
-    width:100%;min-height:0;
     overflow:hidden;
+    z-index:1;
   }
 
   /* ── Chat header ── */
@@ -894,6 +895,7 @@ function openDM(user) {
   activateUI(user.displayName, user.emoji, AVC[user.colorIdx||0], user.online?'🟢 Онлайн':'⚫ Офлайн');
   listenFbMsgs('dms/'+id);
   renderUsers();
+  mobClose();
 }
 
 function openRoom(r) {
@@ -901,6 +903,7 @@ function openRoom(r) {
   activateUI(r.name, r.emoji, 'av0', r.desc);
   listenFbMsgs('rooms/'+r.id);
   buildRooms();
+  mobClose();
 }
 
 function openBot(b) {
@@ -909,6 +912,7 @@ function openBot(b) {
   activateUI(b.name+' 🤖', b.emoji, AVC[b.col], 'AI • Завжди онлайн');
   renderBotMsgs();
   buildBots();
+  mobClose();
 }
 
 function activateUI(name, emoji, avc, status) {
@@ -1109,20 +1113,14 @@ let toastT; function toast(m) { const el=document.getElementById('toast'); el.te
 function mobOpen(){
   document.getElementById('sb').classList.add('open');
   document.getElementById('mob-dim').classList.add('show');
-  if(isMob()) document.getElementById('ca').style.visibility='hidden';
+  document.getElementById('ca').style.visibility='hidden';
 }
 function mobClose(){
   document.getElementById('sb').classList.remove('open');
   document.getElementById('mob-dim').classList.remove('show');
-  if(isMob()) document.getElementById('ca').style.visibility='visible';
+  document.getElementById('ca').style.visibility='visible';
 }
 function isMob(){ return window.innerWidth <= 700; }
-
-// Close sidebar when chat is opened on mobile
-const _oDM = openDM, _oR = openRoom, _oB = openBot;
-openDM   = function(u){ _oDM(u);   if(isMob()) mobClose(); };
-openRoom = function(r){ _oR(r);    if(isMob()) mobClose(); };
-openBot  = function(b){ _oB(b);    if(isMob()) mobClose(); };
 
 // Enter on auth
 document.addEventListener('keydown',e=>{
