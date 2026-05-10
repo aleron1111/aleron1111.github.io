@@ -70,7 +70,7 @@ body{
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
 
 /* BG */
-#bgp{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+#bgp{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;clip-path:inset(0);}
 #bgp span{position:absolute;opacity:.04;animation:fup linear infinite;font-size:1.8rem;}
 @keyframes fup{from{transform:translateY(110vh) rotate(0deg);}to{transform:translateY(-10vh) rotate(360deg);}}
 
@@ -1109,10 +1109,12 @@ let toastT; function toast(m) { const el=document.getElementById('toast'); el.te
 function mobOpen(){
   document.getElementById('sb').classList.add('open');
   document.getElementById('mob-dim').classList.add('show');
+  if(isMob()) document.getElementById('ca').style.visibility='hidden';
 }
 function mobClose(){
   document.getElementById('sb').classList.remove('open');
   document.getElementById('mob-dim').classList.remove('show');
+  if(isMob()) document.getElementById('ca').style.visibility='visible';
 }
 function isMob(){ return window.innerWidth <= 700; }
 
