@@ -17,14 +17,15 @@ import { getDatabase, ref, push, set, get, onValue, onChildAdded, serverTimestam
 // Get it free at: https://console.firebase.google.com
 // ═══════════════════════════════════════════════
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-  projectId: "YOUR_PROJECT",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
-};
+   apiKey: "AIzaSyBUxOr3GMXiyz18rdLVTKxvgixgPQfy0gs",
+   authDomain: "dihhchat.firebaseapp.com",
+   databaseURL: "https://dihhchat-default-rtdb.europe-west1.firebasedatabase.app",
+   projectId: "dihhchat",
+   storageBucket: "dihhchat.firebasestorage.app",
+   messagingSenderId: "953790212417",
+   appId: "1:953790212417:web:bae9943327c2f1753b99c0",
+   measurementId: "G-PQKS0RD1QZ"
+ };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
