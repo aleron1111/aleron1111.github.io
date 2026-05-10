@@ -3,7 +3,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f0a1a">
 <title>🍆 DickChat — Real Messenger</title>
 <link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
 
@@ -275,67 +278,180 @@ body{
 .av7{background:linear-gradient(135deg,#205050,#30a0a0);}
 
 /* ── MOBILE BACK BUTTON ── */
-#mob-back{display:none;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid var(--border);color:var(--text);font-size:1.1rem;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .2s;}
-#mob-back:hover{background:rgba(196,77,255,.2);}
+#mob-back{display:none;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid var(--border);color:var(--text);font-size:1.3rem;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .2s;-webkit-tap-highlight-color:transparent;}
+#mob-back:active{background:rgba(196,77,255,.3);}
 
 /* ── MOBILE OVERLAY ── */
-#mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:19;backdrop-filter:blur(3px);}
+#mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:19;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);}
 
-@media(max-width:680px){
-  /* Stack layout: sidebar slides over chat */
-  #app{position:relative;overflow:hidden;}
+/* ── MOBILE HAMBURGER (hidden on desktop) ── */
+#mob-ham{display:none;}
 
-  /* Sidebar: slide-in drawer */
+@media(max-width:768px){
+  /* iOS safe area support */
+  html{height:-webkit-fill-available;}
+  body{
+    height:100vh;
+    height:-webkit-fill-available;
+    min-height:-webkit-fill-available;
+    overflow:hidden;
+  }
+
+  /* Full screen app */
+  #app{
+    position:fixed;inset:0;
+    width:100vw;height:100%;
+    height:-webkit-fill-available;
+    display:flex;flex-direction:column;
+    overflow:hidden;
+  }
+
+  /* ── SIDEBAR: full-screen drawer ── */
   #sb{
-    position:fixed;top:0;left:0;bottom:0;
-    width:82vw;max-width:320px;min-width:0;
+    position:fixed;
+    top:0;left:0;bottom:0;
+    width:88vw;max-width:340px;min-width:0;
     z-index:20;
     transform:translateX(-100%);
-    transition:transform .28s cubic-bezier(.4,0,.2,1);
-    box-shadow:6px 0 40px rgba(0,0,0,.6);
+    transition:transform .3s cubic-bezier(.4,0,.2,1);
+    box-shadow:8px 0 48px rgba(0,0,0,.7);
+    /* Safe area padding top for notch/Dynamic Island */
+    padding-top:max(env(safe-area-inset-top), 0px);
   }
   #sb.mob-open{transform:translateX(0);}
-  #mob-overlay{display:block;}
-  #mob-overlay.vis{display:block;opacity:1;}
-  #mob-overlay:not(.vis){opacity:0;pointer-events:none;transition:opacity .28s;}
 
-  /* Chat takes full width */
-  #ca{width:100%;min-width:0;flex:1;}
+  /* Sidebar header padding */
+  #sbh{padding:14px 14px 12px;}
 
-  /* Header: show hamburger + back button */
-  #chdr{padding:10px 13px;}
-  #mob-back{display:flex;}
+  /* Overlay */
+  #mob-overlay{display:block;opacity:0;pointer-events:none;transition:opacity .3s;}
+  #mob-overlay.vis{opacity:1;pointer-events:all;}
 
-  /* Hamburger button */
-  #mob-ham{
-    display:flex;width:36px;height:36px;border-radius:50%;
-    background:rgba(255,255,255,.07);border:1px solid var(--border);
-    color:var(--text);font-size:1.1rem;align-items:center;justify-content:center;
-    cursor:pointer;flex-shrink:0;transition:background .2s;
-    position:fixed;top:12px;left:12px;z-index:15;
-    box-shadow:0 2px 12px rgba(0,0,0,.4);
+  /* Chat area: full width */
+  #ca{
+    width:100%;flex:1;
+    display:flex;flex-direction:column;
+    min-width:0;min-height:0;
+    overflow:hidden;
   }
 
-  /* Welcome screen: add top padding for hamburger */
-  #welc{padding-top:60px;}
+  /* ── CHAT HEADER ── */
+  #chdr{
+    padding:10px 12px;
+    padding-top:max(calc(env(safe-area-inset-top) + 8px), 10px);
+    min-height:56px;flex-shrink:0;
+    gap:10px;
+  }
+  #mob-back{display:flex;}
 
-  /* Messages: tighter padding */
-  #msgs{padding:12px 10px;}
+  /* ── HAMBURGER BUTTON (fixed, above everything) ── */
+  #mob-ham{
+    display:flex;
+    position:fixed;
+    top:max(calc(env(safe-area-inset-top) + 10px), 12px);
+    left:14px;
+    z-index:25;
+    width:42px;height:42px;border-radius:50%;
+    background:rgba(15,10,26,.85);
+    border:1.5px solid var(--border);
+    color:var(--text);font-size:1.15rem;
+    align-items:center;justify-content:center;
+    cursor:pointer;
+    box-shadow:0 2px 16px rgba(0,0,0,.5);
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+    -webkit-tap-highlight-color:transparent;
+    transition:background .2s;
+  }
+  #mob-ham:active{background:rgba(196,77,255,.3);}
 
-  /* Input area: tighter */
-  #ia{padding:8px 10px 12px;}
-  .qr{gap:4px;}
-  .qe{font-size:1.08rem;}
+  /* ── WELCOME screen ── */
+  #welc{
+    padding-top:max(calc(env(safe-area-inset-top) + 50px), 70px);
+    padding-bottom:max(env(safe-area-inset-bottom), 20px);
+  }
 
-  /* Bubbles: wider on mobile */
-  .mc{max-width:78%;}
-  /* Fix overflow */
-  #msgs{overflow-x:hidden;}
+  /* ── MESSAGES ── */
+  #msgs{
+    flex:1;
+    overflow-y:auto;overflow-x:hidden;
+    padding:12px 10px;
+    -webkit-overflow-scrolling:touch;
+  }
+  /* No bubble overflow */
   .mr{max-width:100%;}
-  .bub{word-break:break-word;overflow-wrap:anywhere;}
+  .mc{max-width:82%;}
+  .bub{word-break:break-word;overflow-wrap:anywhere;font-size:.85rem;}
 
-  /* Header name truncation */
-  .hn{font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;}
+  /* ── TYPING INDICATOR ── */
+  #tyb{padding:2px 12px 2px;flex-shrink:0;}
+
+  /* ── INPUT AREA ── */
+  #ia{
+    padding:8px 10px;
+    padding-bottom:max(calc(env(safe-area-inset-bottom) + 6px), 10px);
+    flex-shrink:0;
+  }
+  .qr{
+    gap:3px;padding-bottom:6px;
+    overflow-x:auto;flex-wrap:nowrap;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:none;
+  }
+  .qr::-webkit-scrollbar{display:none;}
+  .qe{font-size:1.15rem;flex-shrink:0;}
+  .ir{gap:8px;}
+  #mi2{font-size:.9rem;padding:10px 13px;border-radius:20px;}
+  #sb2{width:42px;height:42px;font-size:1.1rem;flex-shrink:0;}
+
+  /* ── HEADER text ── */
+  .hn{font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:55vw;}
+  .hs{font-size:.67rem;}
+  .ha{gap:6px;}
+  .ib{width:34px;height:34px;font-size:.9rem;}
+
+  /* ── AUTH/SETUP screens ── */
+  .ac,.sc{
+    width:92vw;max-width:400px;
+    padding:28px 20px;
+  }
+
+  /* ── FIREBASE NOTICE ── */
+  .nc{width:94vw;padding:24px 18px;}
+  .nc h2{font-size:1.3rem;}
+  .nc p,.nc ol li{font-size:.8rem;}
+
+  /* ── SIDEBAR LIST items ── */
+  .ui{padding:10px 12px;}
+  .ua{width:38px;height:38px;font-size:1.1rem;}
+  .un{font-size:.83rem;}
+  .up{font-size:.7rem;}
+
+  /* ── TOAST ── */
+  #toast{
+    bottom:max(calc(env(safe-area-inset-bottom) + 70px), 80px);
+    right:14px;left:14px;
+    max-width:none;text-align:center;
+  }
+}
+
+/* ── iPhone SE (375px) extra tweaks ── */
+@media(max-width:390px){
+  .mc{max-width:85%;}
+  .bub{font-size:.82rem;padding:8px 11px;}
+  #mi2{font-size:.85rem;}
+  .hn{max-width:50vw;}
+  .qe{font-size:1.05rem;}
+  .ac,.sc{padding:22px 16px;}
+}
+
+/* ── Landscape iPhone ── */
+@media(max-width:768px) and (orientation:landscape){
+  #sb{width:60vw;}
+  #chdr{padding-top:10px;}
+  #mob-ham{top:10px;}
+  #welc{padding-top:50px;}
+  #ia{padding-bottom:8px;}
+  .qr{display:none;}
 }
 </style>
 
@@ -1039,7 +1155,7 @@ let toastT; function toast(m) { const el=document.getElementById('toast'); el.te
 // ═══════════════════════════
 // MOBILE SIDEBAR
 // ═══════════════════════════
-function isMobile(){ return window.innerWidth <= 680; }
+function isMobile(){ return window.innerWidth <= 768; }
 
 function openSidebar(){
   if(!isMobile()) return;
