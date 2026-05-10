@@ -272,51 +272,14 @@ body{
 .av6{background:linear-gradient(135deg,#608020,#a0c030);}
 .av7{background:linear-gradient(135deg,#205050,#30a0a0);}
 
-/* ── MOBILE BACK BUTTON (old, kept hidden) ── */
-#mob-back{display:none;}
+/* ── MOBILE BACK BUTTON ── */
+#mob-back{display:none;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid var(--border);color:var(--text);font-size:1.4rem;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .2s;font-family:sans-serif;line-height:1;}
+#mob-back:hover{background:rgba(196,77,255,.2);}
 
 /* ── MOBILE OVERLAY ── */
-#mob-overlay{display:none;}
-
-/* ── FLOATING BACK BUTTON ── */
-#mob-back-float{
-  display:none;
-  position:fixed;
-  top:14px; right:14px;
-  z-index:100;
-  width:40px; height:40px;
-  border-radius:50%;
-  background:var(--accent);
-  border:none;
-  color:#fff;
-  font-size:1.1rem;
-  align-items:center;
-  justify-content:center;
-  cursor:pointer;
-  box-shadow:0 4px 18px rgba(196,77,255,.5);
-  transition:transform .15s, box-shadow .15s;
-}
-#mob-back-float:hover{transform:scale(1.1);box-shadow:0 6px 24px rgba(196,77,255,.7);}
-#mob-back-float:active{transform:scale(.93);}
+#mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:19;backdrop-filter:blur(3px);}
 
 @media(max-width:680px){
-  /* Messages: tighter padding */
-  #msgs{padding:12px 10px;}
-
-  /* Input area: tighter */
-  #ia{padding:8px 10px 12px;}
-  .qr{gap:4px;}
-  .qe{font-size:1.08rem;}
-
-  /* Bubbles: wider on mobile */
-  .mc{max-width:78%;}
-
-  /* Header name truncation */
-  .hn{font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;}
-
-  /* Welcome screen: add top padding */
-  #welc{padding-top:20px;}
-
   /* Sidebar drawer */
   #sb{
     position:fixed;top:0;left:0;bottom:0;
@@ -330,21 +293,37 @@ body{
   #mob-overlay{display:block;opacity:0;pointer-events:none;transition:opacity .28s;}
   #mob-overlay.vis{opacity:1;pointer-events:all;}
   #ca{width:100%;min-width:0;flex:1;}
-  #chdr{padding:10px 13px;}
 
-  /* Hamburger button */
-  #mob-ham{
-    display:flex;width:36px;height:36px;border-radius:50%;
-    background:rgba(255,255,255,.07);border:1px solid var(--border);
-    color:var(--text);font-size:1.1rem;align-items:center;justify-content:center;
-    cursor:pointer;flex-shrink:0;transition:background .2s;
-    position:fixed;top:12px;left:12px;z-index:15;
-    box-shadow:0 2px 12px rgba(0,0,0,.4);
+  /* Header: back button visible, hamburger hidden */
+  #mob-ham{ display:none !important; }
+  #mob-back{ display:flex; }
+  #chdr{ padding:10px 13px; gap:9px; }
+
+  /* Welcome screen */
+  #welc{ padding-top:20px; }
+
+  /* Messages */
+  #msgs{ padding:10px 8px; }
+
+  /* Bubbles wider */
+  .mc{ max-width:80%; }
+
+  /* Input area: hide quick-emoji row, stretch textarea */
+  .qr{ display:none; }
+  #ia{ padding:8px 10px 12px; }
+  .ir{ gap:8px; }
+  #mi2{
+    flex:1;
+    font-size:.95rem;
+    padding:12px 16px;
+    border-radius:24px;
+    max-height:120px;
   }
+  #sb2{ width:44px; height:44px; font-size:1.2rem; flex-shrink:0; }
 
-  /* Push chat header right so it doesn't overlap hamburger */
-  #chdr{ padding-left:58px; }
-  #welc{ padding-top:60px; }
+  /* Header name truncation */
+  .hn{ font-size:1rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:180px; }
+  .hs{ font-size:.7rem; }
 }
 </style>
 </head>
@@ -352,7 +331,7 @@ body{
 <div id="bgp"></div>
 <div id="mob-overlay" onclick="closeSidebar()"></div>
 <button id="mob-ham" onclick="openSidebar()" style="display:none">☰</button>
-<button id="mob-back-float" onclick="mobGoBack()" title="Назад до чатів">‹</button>
+
 
 <!-- FIREBASE NOTICE -->
 <div id="firebase-notice">
@@ -496,7 +475,7 @@ body{
     </div>
 
     <div id="chdr" style="display:none">
-      <div id="mob-back" onclick="openSidebar()" title="Назад">‹</div>
+      <div id="mob-back" onclick="mobGoBack()" title="Назад">‹</div>
       <div class="hav" id="h-av">?</div>
       <div><div class="hn" id="h-nm">Name</div><div class="hs" id="h-st">Online</div></div>
       <div class="ha">
@@ -851,7 +830,6 @@ function activateUI(name, emoji, avc, status) {
   hav.textContent = emoji; hav.className = `hav ${avc}`;
   document.getElementById('h-nm').textContent = name;
   document.getElementById('h-st').textContent = status;
-  showMobBack(true);
 }
 
 // ═══════════════════════════
@@ -1051,24 +1029,9 @@ function closeSidebar(){
 }
 
 function syncMobileUI(){
-  const ham = document.getElementById('mob-ham');
-  if(isMobile()){
-    ham.style.display = 'flex';
-  } else {
-    ham.style.display = 'none';
-    closeSidebar();
-    showMobBack(false);
-  }
+  if(!isMobile()) closeSidebar();
 }
 window.addEventListener('resize', syncMobileUI);
-window.addEventListener('load', syncMobileUI);
-
-// Floating back button
-function showMobBack(show){
-  const btn = document.getElementById('mob-back-float');
-  if(!btn) return;
-  btn.style.display = (show && isMobile()) ? 'flex' : 'none';
-}
 
 function mobGoBack(){
   document.getElementById('chdr').style.display = 'none';
@@ -1076,7 +1039,6 @@ function mobGoBack(){
   document.getElementById('tyb').style.display  = 'none';
   document.getElementById('ia').style.display   = 'none';
   document.getElementById('welc').style.display = 'flex';
-  showMobBack(false);
   document.querySelectorAll('.ui.active').forEach(el=>el.classList.remove('active'));
   currentChat = null;
 }
