@@ -1,29 +1,31 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#0f0a1a">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🍆 DickChat — Real Messenger</title>
 <link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
 
+<!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getDatabase, ref, push, set, get, onValue, onChildAdded, serverTimestamp, query, orderByChild, limitToLast, off } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
+// ═══════════════════════════════════════════════
+// 🔥 FIREBASE CONFIG — REPLACE WITH YOUR OWN!
+// Get it free at: https://console.firebase.google.com
+// ═══════════════════════════════════════════════
 const firebaseConfig = {
-  apiKey: "AIzaSyBUxOr3GMXiyz18rdLVTKxvgixgPQfy0gs",
-  authDomain: "dihhchat.firebaseapp.com",
-  databaseURL: "https://dihhchat-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "dihhchat",
-  storageBucket: "dihhchat.firebasestorage.app",
-  messagingSenderId: "953790212417",
-  appId: "1:953790212417:web:bae9943327c2f1753b99c0",
-  measurementId: "G-PQKS0RD1QZ"
-};
+   apiKey: "AIzaSyBUxOr3GMXiyz18rdLVTKxvgixgPQfy0gs",
+   authDomain: "dihhchat.firebaseapp.com",
+   databaseURL: "https://dihhchat-default-rtdb.europe-west1.firebasedatabase.app",
+   projectId: "dihhchat",
+   storageBucket: "dihhchat.firebasestorage.app",
+   messagingSenderId: "953790212417",
+   appId: "1:953790212417:web:bae9943327c2f1753b99c0",
+   measurementId: "G-PQKS0RD1QZ"
+ };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -63,10 +65,12 @@ body{
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
 
+/* BG */
 #bgp{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
-#bgp span{position:absolute;opacity:.04;animation:fup linear infinite;font-size:1.8rem;will-change:transform;}
+#bgp span{position:absolute;opacity:.04;animation:fup linear infinite;font-size:1.8rem;}
 @keyframes fup{from{transform:translateY(110vh) rotate(0deg);}to{transform:translateY(-10vh) rotate(360deg);}}
 
+/* ── FIREBASE NOTICE ── */
 #firebase-notice{
   position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.92);
   display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);
@@ -92,6 +96,7 @@ body{
 }
 .nc-btn:hover{transform:translateY(-2px);}
 
+/* ── AUTH ── */
 #auth-screen{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;background:var(--bg);}
 .ac{
   background:var(--panel);border:2px solid var(--border);border-radius:24px;
@@ -126,6 +131,7 @@ body{
 .abtn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(196,77,255,.55);}
 #auth-err{color:var(--danger);font-size:.82rem;text-align:center;margin-top:8px;min-height:18px;}
 
+/* ── SETUP ── */
 #setup-screen{position:fixed;inset:0;z-index:49;display:none;align-items:center;justify-content:center;background:var(--bg);}
 .sc{
   background:var(--panel);border:2px solid var(--border);border-radius:24px;
@@ -141,8 +147,10 @@ body{
 .eo.sel{border-color:var(--accent);background:rgba(196,77,255,.15);}
 #setup-err{color:var(--danger);font-size:.82rem;margin-top:8px;}
 
+/* ── APP ── */
 #app{display:none;flex:1;height:100vh;overflow:hidden;}
 
+/* SIDEBAR */
 #sb{
   width:285px;min-width:285px;background:var(--panel2);
   border-right:2px solid var(--border);display:flex;flex-direction:column;
@@ -201,6 +209,7 @@ body{
 .ut{font-size:.65rem;color:var(--text-dim);}
 .badge{background:var(--accent);color:#fff;font-size:.62rem;font-weight:800;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;flex-shrink:0;}
 
+/* CHAT */
 #ca{flex:1;display:flex;flex-direction:column;min-width:0;position:relative;z-index:5;}
 #chdr{padding:12px 17px;border-bottom:2px solid var(--border);background:var(--panel);display:flex;align-items:center;gap:12px;flex-shrink:0;box-shadow:0 2px 20px rgba(0,0,0,.3);}
 .hav{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0;border:2px solid var(--border);}
@@ -263,150 +272,200 @@ body{
 .av6{background:linear-gradient(135deg,#608020,#a0c030);}
 .av7{background:linear-gradient(135deg,#205050,#30a0a0);}
 
-/* ══════════════════════════════════
-   MOBILE — burger drawer
-   ══════════════════════════════════ */
-#mob-ham{display:none;}
+/* ── MOBILE BACK BUTTON ── */
+#mob-back{display:none;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid var(--border);color:var(--text);font-size:1.1rem;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .2s;}
+#mob-back:hover{background:rgba(196,77,255,.2);}
 
-@media(max-width:700px){
-  html,body{height:100%;height:-webkit-fill-available;overflow:hidden;}
+/* ── MOBILE OVERLAY ── */
+#mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:19;backdrop-filter:blur(3px);}
 
+/* ══════════════════════════════════════
+   TELEGRAM-STYLE MOBILE INTERFACE
+   ══════════════════════════════════════ */
+@media(max-width:680px){
+  /* Hide desktop elements */
+  #mob-ham{ display:none !important; }
+  #mob-overlay{ display:none !important; }
+
+  body{ overflow:hidden; }
+
+  /* App is a full-screen container with two "pages" */
   #app{
-    position:fixed;inset:0;
-    width:100%;height:100%;
-    display:flex;flex-direction:column;
+    position:relative;
     overflow:hidden;
+    width:100vw;
+    height:100dvh;
+    display:block !important; /* override flex for mobile */
   }
 
-  /* ── Sidebar: slide-in drawer ── */
+  /* ── SIDEBAR becomes the CHAT LIST screen ── */
   #sb{
-    position:fixed;
-    top:0;left:0;bottom:0;
-    width:80vw;max-width:300px;
-    z-index:40;
-    transform:translateX(-100%);
-    transition:transform .28s cubic-bezier(.4,0,.2,1);
-    background:var(--panel2);
-    border-right:2px solid var(--border);
-    box-shadow:none;
+    position:absolute;
+    top:0; left:0; right:0; bottom:0;
+    width:100%;
+    min-width:0;
+    border-right:none;
+    transform:translateX(0);
+    transition:transform .32s cubic-bezier(.4,0,.2,1);
+    z-index:10;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* Telegram-style top bar in sidebar */
+  #sbh{
+    padding:0;
+    border-bottom:1.5px solid var(--border);
+    background:var(--panel);
+  }
+
+  /* Mobile top bar inside sidebar header */
+  #sbh::before{
+    content:'';
+    display:block;
+    height:env(safe-area-inset-top, 0px);
+    background:var(--panel);
+  }
+
+  .lr{
+    padding:10px 14px 8px;
+    margin-bottom:0;
+  }
+
+  .lsvg{ width:36px; height:36px; }
+  .lt{ font-size:1.4rem; }
+
+  /* Me card compact */
+  #mec{
+    margin:0 12px 10px;
+    padding:7px 10px;
+    border-radius:10px;
+  }
+
+  /* Search bar */
+  .sw{ padding:6px 12px 8px; }
+  .si input{ font-size:.85rem; padding:9px 12px 9px 34px; }
+
+  /* Tab bar */
+  .stabs{ border-bottom:1.5px solid var(--border); }
+  .stab{ padding:9px 4px; font-size:.65rem; }
+
+  /* Chat list items — taller touch targets */
+  .ui{ padding:11px 14px; }
+  .ua{ width:46px; height:46px; font-size:1.35rem; }
+  .un{ font-size:.9rem; }
+  .up{ font-size:.75rem; }
+
+  /* ── CHAT AREA becomes the CHAT screen ── */
+  #ca{
+    position:absolute;
+    top:0; left:0; right:0; bottom:0;
+    width:100%;
+    display:flex;
+    flex-direction:column;
+    transform:translateX(100%); /* hidden to the right by default */
+    transition:transform .32s cubic-bezier(.4,0,.2,1);
+    z-index:11;
+    background:var(--bg);
+  }
+
+  /* When chat is active: slide chat in, slide list out */
+  #app.mob-chat-open #ca{
+    transform:translateX(0);
+  }
+  #app.mob-chat-open #sb{
+    transform:translateX(-30%);
+    pointer-events:none;
+  }
+
+  /* ── CHAT HEADER — Telegram style ── */
+  #chdr{
+    padding:0 10px;
+    min-height:56px;
+    background:var(--panel);
+    border-bottom:1.5px solid var(--border);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-shrink:0;
+    box-shadow:0 1px 10px rgba(0,0,0,.3);
+  }
+
+  /* Padding for safe area (notch) */
+  #chdr::before{
+    content:'';
+    display:none;
+  }
+
+  /* Back arrow — always shown in mobile chat header */
+  #mob-back{
+    display:flex !important;
+    width:38px; height:38px;
+    background:none;
+    border:none;
+    font-size:1.5rem;
+    color:var(--accent);
+    margin-right:2px;
+  }
+  #mob-back:hover{ background:rgba(196,77,255,.12); }
+
+  .hav{ width:38px; height:38px; font-size:1.15rem; }
+  .hn{ font-size:1rem; max-width:160px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .hs{ font-size:.7rem; }
+
+  /* Action buttons in header */
+  .ha{ gap:4px; }
+  .ib{ width:34px; height:34px; font-size:.95rem; }
+
+  /* ── MESSAGES ── */
+  #msgs{
+    flex:1;
+    padding:10px 8px 6px;
     overflow-y:auto;
     -webkit-overflow-scrolling:touch;
   }
-  #sb.open{
-    transform:translateX(0);
-    box-shadow:4px 0 30px rgba(0,0,0,.6);
-  }
 
-  /* ── FIX: overlay uses opacity+pointer-events instead of display:none ── */
-  #mob-dim{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.55);
-    z-index:39;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity .28s cubic-bezier(.4,0,.2,1);
-    /* NO display:none — avoids iOS rendering glitch */
-  }
-  #mob-dim.show{
-    opacity:1;
-    pointer-events:auto;
-  }
+  .mc{ max-width:80%; }
+  .bub{ font-size:.88rem; padding:8px 12px; }
 
-  /* ── Burger button ── */
-  #mob-ham{
-    display:flex;
-    position:fixed;
-    top:10px;left:10px;
-    z-index:45;
-    width:40px;height:40px;
-    border-radius:50%;
-    background:var(--panel2);
-    border:1.5px solid var(--border);
-    color:var(--text);
-    font-size:1.1rem;
-    align-items:center;justify-content:center;
-    cursor:pointer;
-    box-shadow:0 2px 12px rgba(0,0,0,.5);
-    -webkit-tap-highlight-color:transparent;
-  }
-
-  /* ── Chat area: full screen, always visible ── */
-  #ca{
-    position:fixed;
-    inset:0;
-    display:flex;flex-direction:column;
-    overflow:hidden;
-    z-index:1;
-    /* FIX: never hide chat area — removing visibility:hidden from mobOpen() */
-  }
-
-  #chdr{
-    padding:10px 10px 10px 60px;
-    flex-shrink:0;
-    gap:8px;
-  }
-  .hn{font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:45vw;}
-  .hs{font-size:.68rem;}
-  .hav{width:36px;height:36px;font-size:1.1rem;}
-  .ib{width:32px;height:32px;font-size:.85rem;}
-  .ha{gap:5px;}
-
-  #welc{
-    padding-top:70px;
-    padding-left:16px;padding-right:16px;
-  }
-  #welc h2{font-size:1.3rem;}
-  #welc p{font-size:.82rem;}
-
-  #msgs{
-    flex:1;
-    overflow-y:auto;overflow-x:hidden;
-    padding:10px 8px;
-    -webkit-overflow-scrolling:touch;
-  }
-  .mc{max-width:78%;}
-  .bub{font-size:.85rem;padding:8px 12px;word-break:break-word;overflow-wrap:anywhere;}
-  .mav2{width:26px;height:26px;font-size:.82rem;}
-  .mt{font-size:.6rem;}
-  .msn{font-size:.63rem;}
-
-  #tyb{padding:2px 10px;flex-shrink:0;font-size:.72rem;}
-
+  /* ── INPUT AREA ── */
   #ia{
-    flex-shrink:0;
-    padding:7px 8px;
-    padding-bottom:max(env(safe-area-inset-bottom),8px);
-    border-top:2px solid var(--border);
-  }
-  .qr{
-    gap:3px;padding-bottom:5px;
-    overflow-x:auto;flex-wrap:nowrap;
-    -webkit-overflow-scrolling:touch;
-    scrollbar-width:none;
-  }
-  .qr::-webkit-scrollbar{display:none;}
-  .qe{font-size:1.1rem;flex-shrink:0;}
-  .ir{gap:7px;}
-  #mi2{font-size:.88rem;padding:9px 12px;border-radius:20px;}
-  #sb2{width:40px;height:40px;font-size:1rem;flex-shrink:0;}
-
-  #toast{
-    bottom:max(calc(env(safe-area-inset-bottom)+60px),70px);
-    right:12px;left:12px;max-width:none;text-align:center;
+    padding:6px 8px 10px;
+    padding-bottom:calc(6px + env(safe-area-inset-bottom, 0px));
+    border-top:1.5px solid var(--border);
+    background:var(--panel);
   }
 
-  .ac,.sc{width:90vw;max-width:380px;padding:26px 18px;}
+  .qr{ gap:3px; padding-bottom:5px; }
+  .qe{ font-size:1.05rem; }
+
+  .ir{ gap:8px; }
+  #mi2{
+    font-size:.9rem;
+    padding:10px 14px;
+    border-radius:24px;
+    max-height:100px;
+  }
+  #sb2{ width:42px; height:42px; font-size:1.1rem; }
+
+  /* Typing indicator */
+  #tyb{ padding:0 12px 2px; font-size:.75rem; min-height:20px; }
+
+  /* Welcome screen hidden on mobile (list is the "welcome") */
+  #welc{ display:none !important; }
+
+  /* Sidebar section label */
+  .sl{ padding:8px 14px 3px; font-size:.6rem; }
 }
 </style>
-
 </head>
 <body>
 <div id="bgp"></div>
-<button id="mob-ham" onclick="mobOpen()" aria-label="Menu">☰</button>
-<div id="mob-dim" onclick="mobClose()"></div>
+<div id="mob-overlay" onclick="closeSidebar()"></div>
+<button id="mob-ham" onclick="openSidebar()" style="display:none">☰</button>
 
-<div id="firebase-notice" style="display:none">
+<!-- FIREBASE NOTICE -->
+<div id="firebase-notice">
   <div class="nc">
     <h2>⚙️ Потрібно налаштувати Firebase</h2>
     <p>DickChat потребує безкоштовний Firebase-проєкт для зберігання повідомлень і реєстрації юзерів. Займе ~5 хвилин:</p>
@@ -425,6 +484,7 @@ body{
   </div>
 </div>
 
+<!-- AUTH SCREEN -->
 <div id="auth-screen">
   <div class="ac">
     <div class="al">
@@ -461,6 +521,7 @@ body{
   </div>
 </div>
 
+<!-- SETUP SCREEN -->
 <div id="setup-screen">
   <div class="sc">
     <div style="font-size:3rem;margin-bottom:8px">🎉</div>
@@ -477,7 +538,9 @@ body{
   </div>
 </div>
 
+<!-- MAIN APP -->
 <div id="app">
+  <!-- SIDEBAR -->
   <div id="sb">
     <div id="sbh">
       <div class="lr">
@@ -505,31 +568,31 @@ body{
       </div>
     </div>
 
-```
-<div class="stabs">
-  <div class="stab active" id="st-ppl" onclick="swSidTab('ppl')">👥 Люди</div>
-  <div class="stab" id="st-rms" onclick="swSidTab('rms')">📢 Кімнати</div>
-  <div class="stab" id="st-bot" onclick="swSidTab('bot')">🤖 Боти</div>
-</div>
+    <div class="stabs">
+      <div class="stab active" id="st-ppl" onclick="swSidTab('ppl')">👥 Люди</div>
+      <div class="stab" id="st-rms" onclick="swSidTab('rms')">📢 Кімнати</div>
+      <div class="stab" id="st-bot" onclick="swSidTab('bot')">🤖 Боти</div>
+    </div>
 
-<div class="sw"><div class="si"><input type="text" placeholder="Пошук..." id="srch" oninput="doSearch(this.value)"></div></div>
+    <div class="sw"><div class="si"><input type="text" placeholder="Пошук..." id="srch" oninput="doSearch(this.value)"></div></div>
 
-<div class="ls-sec" id="tab-ppl">
-  <div class="sl">Реальні юзери</div>
-  <div id="ul"><div style="padding:16px;text-align:center;color:var(--text-dim);font-size:.82rem">Завантаження…</div></div>
-</div>
-<div class="ls-sec" id="tab-rms" style="display:none">
-  <div class="sl">Публічні кімнати</div>
-  <div id="rl"></div>
-</div>
-<div class="ls-sec" id="tab-bot" style="display:none">
-  <div class="sl">AI Компаньйони</div>
-  <div id="bl"></div>
-</div>
-```
+    <div class="ls-sec" id="tab-ppl">
+      <div class="sl">Реальні юзери</div>
+      <div id="ul"><div style="padding:16px;text-align:center;color:var(--text-dim);font-size:.82rem">Завантаження…</div></div>
+    </div>
 
+    <div class="ls-sec" id="tab-rms" style="display:none">
+      <div class="sl">Публічні кімнати</div>
+      <div id="rl"></div>
+    </div>
+
+    <div class="ls-sec" id="tab-bot" style="display:none">
+      <div class="sl">AI Компаньйони</div>
+      <div id="bl"></div>
+    </div>
   </div>
 
+  <!-- CHAT AREA -->
   <div id="ca">
     <div id="welc">
       <svg width="80" height="90" viewBox="0 0 80 90" fill="none">
@@ -542,46 +605,47 @@ body{
       <p>Вибери реального юзера, публічну кімнату або чатни з AI-ботом.</p>
     </div>
 
-```
-<div id="chdr" style="display:none">
-  <div class="hav" id="h-av">?</div>
-  <div><div class="hn" id="h-nm">Name</div><div class="hs" id="h-st">Online</div></div>
-  <div class="ha">
-    <div class="ib" title="Штовхнути" onclick="poke()">👉</div>
-    <div class="ib" title="Очистити вид" onclick="clearView()">🗑️</div>
-  </div>
-</div>
+    <div id="chdr" style="display:none">
+      <div id="mob-back" onclick="openSidebar()" title="Назад">‹</div>
+      <div class="hav" id="h-av">?</div>
+      <div><div class="hn" id="h-nm">Name</div><div class="hs" id="h-st">Online</div></div>
+      <div class="ha">
+        <div class="ib" title="Штовхнути" onclick="poke()">👉</div>
+        <div class="ib" title="Очистити вид" onclick="clearView()">🗑️</div>
+      </div>
+    </div>
 
-<div id="msgs" style="display:none"></div>
-<div id="tyb" style="display:none"></div>
+    <div id="msgs" style="display:none"></div>
+    <div id="tyb" style="display:none"></div>
 
-<div id="ia" style="display:none">
-  <div class="qr">
-    <span class="qe" onclick="qi('🍆')">🍆</span>
-    <span class="qe" onclick="qi('🍑')">🍑</span>
-    <span class="qe" onclick="qi('💦')">💦</span>
-    <span class="qe" onclick="qi('🌶️')">🌶️</span>
-    <span class="qe" onclick="qi('🔥')">🔥</span>
-    <span class="qe" onclick="qi('😈')">😈</span>
-    <span class="qe" onclick="qi('❤️')">❤️</span>
-    <span class="qe" onclick="qi('😂')">😂</span>
-    <span class="qe" onclick="qi('💀')">💀</span>
-    <span class="qe" onclick="qi('🎉')">🎉</span>
-  </div>
-  <div class="ir">
-    <textarea id="mi2" placeholder="Написати повідомлення… 🍆" rows="1"
-      onkeydown="hkey(event)" oninput="agrow(this);onTyp()"></textarea>
-    <button id="sb2" onclick="sendMsg()">➤</button>
-  </div>
-</div>
-```
-
+    <div id="ia" style="display:none">
+      <div class="qr">
+        <span class="qe" onclick="qi('🍆')">🍆</span>
+        <span class="qe" onclick="qi('🍑')">🍑</span>
+        <span class="qe" onclick="qi('💦')">💦</span>
+        <span class="qe" onclick="qi('🌶️')">🌶️</span>
+        <span class="qe" onclick="qi('🔥')">🔥</span>
+        <span class="qe" onclick="qi('😈')">😈</span>
+        <span class="qe" onclick="qi('❤️')">❤️</span>
+        <span class="qe" onclick="qi('😂')">😂</span>
+        <span class="qe" onclick="qi('💀')">💀</span>
+        <span class="qe" onclick="qi('🎉')">🎉</span>
+      </div>
+      <div class="ir">
+        <textarea id="mi2" placeholder="Написати повідомлення… 🍆" rows="1"
+          onkeydown="hkey(event)" oninput="agrow(this);onTyp()"></textarea>
+        <button id="sb2" onclick="sendMsg()">➤</button>
+      </div>
+    </div>
   </div>
 </div>
 
 <div id="toast"></div>
 
 <script>
+// ═══════════════════════════
+// STATE
+// ═══════════════════════════
 let currentUser = null;
 let myProfile = null;
 let currentChat = null;
@@ -601,11 +665,11 @@ const ROOMS = [
 ];
 
 const BOTS = [
-  {id:'bot_anna',name:'Anna',  emoji:'🌸',desc:'Позитивчик ✨',col:1},
-  {id:'bot_max', name:'Max',   emoji:'🏋️',desc:'Бро-качок 💪', col:2},
-  {id:'bot_zara',name:'Zara',  emoji:'🔮',desc:'Містика 🌙',   col:5},
-  {id:'bot_dima',name:'Dima',  emoji:'🎮',desc:'Гамер 🕹️',    col:3},
-  {id:'bot_leo', name:'Leo',   emoji:'🦁',desc:'Кінг 👑',      col:4},
+  {id:'bot_anna',name:'Anna',  emoji:'🌸',desc:'Позитивчик ✨',  col:1},
+  {id:'bot_max', name:'Max',   emoji:'🏋️',desc:'Бро-качок 💪',  col:2},
+  {id:'bot_zara',name:'Zara',  emoji:'🔮',desc:'Містика 🌙',    col:5},
+  {id:'bot_dima',name:'Dima',  emoji:'🎮',desc:'Гамер 🕹️',     col:3},
+  {id:'bot_leo', name:'Leo',   emoji:'🦁',desc:'Кінг 👑',       col:4},
 ];
 
 const R = {
@@ -619,11 +683,20 @@ const R = {
 
 const botHistory = {};
 
+// ═══════════════════════════
+// INIT
+// ═══════════════════════════
 window.addEventListener('load', () => {
   initBg();
   buildEG();
   buildRooms();
   buildBots();
+  // Auto-hide notice if config replaced (firebase module sets _firebaseReady)
+  setTimeout(() => {
+    if (!window._firebaseReady) {
+      // Still showing notice — config not replaced yet
+    }
+  }, 2000);
 });
 
 function initBg() {
@@ -639,7 +712,6 @@ function initBg() {
 
 function buildEG() {
   const g = document.getElementById('eg');
-  if (!g || g.children.length) return;
   EMOJIS.forEach((e,i) => {
     const d = document.createElement('div');
     d.className = 'eo'+(i===0?' sel':'');
@@ -649,6 +721,9 @@ function buildEG() {
   });
 }
 
+// ═══════════════════════════
+// AUTH
+// ═══════════════════════════
 function showAuth() {
   document.getElementById('auth-screen').style.display = 'flex';
   document.getElementById('setup-screen').style.display = 'none';
@@ -702,10 +777,14 @@ async function doLogout() {
   await window._authFns.signOut(window._auth);
 }
 
+// ═══════════════════════════
+// SHOW APP
+// ═══════════════════════════
 async function showApp(user) {
   currentUser = user;
   document.getElementById('auth-screen').style.display = 'none';
   document.getElementById('firebase-notice').style.display = 'none';
+
   const snap = await window._dbFns.get(window._dbFns.ref(window._db,`users/${user.uid}`));
   if (!snap.exists()||!snap.val().displayName) {
     document.getElementById('setup-screen').style.display = 'flex';
@@ -713,6 +792,18 @@ async function showApp(user) {
   }
   myProfile = snap.val();
   launchApp();
+}
+
+function buildEG() {
+  const g = document.getElementById('eg');
+  if (!g||g.children.length) return;
+  EMOJIS.forEach((e,i) => {
+    const d = document.createElement('div');
+    d.className='eo'+(i===0?' sel':'');
+    d.textContent=e;
+    d.onclick=()=>{ document.querySelectorAll('.eo').forEach(x=>x.classList.remove('sel')); d.classList.add('sel'); };
+    g.appendChild(d);
+  });
 }
 
 async function doSetup() {
@@ -742,6 +833,9 @@ function launchApp() {
   buildBots();
 }
 
+// ═══════════════════════════
+// USERS
+// ═══════════════════════════
 function listenUsers() {
   window._dbFns.onValue(window._dbFns.ref(window._db,'users'), snap => {
     allUsers = {};
@@ -782,6 +876,9 @@ function renderUsers(f='') {
 
 function dmId(a,b) { return [a,b].sort().join('_'); }
 
+// ═══════════════════════════
+// ROOMS & BOTS
+// ═══════════════════════════
 function buildRooms() {
   const rl = document.getElementById('rl');
   if (!rl) return;
@@ -808,6 +905,9 @@ function buildBots() {
   });
 }
 
+// ═══════════════════════════
+// SIDEBAR TABS
+// ═══════════════════════════
 function swSidTab(t) {
   ['ppl','rms','bot'].forEach(x=>{
     document.getElementById('tab-'+x).style.display = x===t?'flex':'none';
@@ -820,6 +920,9 @@ function doSearch(v) {
   if (document.getElementById('tab-ppl').style.display!=='none') renderUsers(v);
 }
 
+// ═══════════════════════════
+// OPEN CHAT
+// ═══════════════════════════
 function openDM(user) {
   const id = dmId(currentUser.uid, user.uid);
   currentChat = {type:'dm',id,name:user.displayName,emoji:user.emoji,col:user.colorIdx||0};
@@ -827,7 +930,7 @@ function openDM(user) {
   activateUI(user.displayName, user.emoji, AVC[user.colorIdx||0], user.online?'🟢 Онлайн':'⚫ Офлайн');
   listenFbMsgs('dms/'+id);
   renderUsers();
-  mobClose();
+  if(isMobile()) closeSidebar();
 }
 
 function openRoom(r) {
@@ -835,7 +938,7 @@ function openRoom(r) {
   activateUI(r.name, r.emoji, 'av0', r.desc);
   listenFbMsgs('rooms/'+r.id);
   buildRooms();
-  mobClose();
+  if(isMobile()) closeSidebar();
 }
 
 function openBot(b) {
@@ -844,7 +947,7 @@ function openBot(b) {
   activateUI(b.name+' 🤖', b.emoji, AVC[b.col], 'AI • Завжди онлайн');
   renderBotMsgs();
   buildBots();
-  mobClose();
+  if(isMobile()) closeSidebar();
 }
 
 function activateUI(name, emoji, avc, status) {
@@ -860,6 +963,9 @@ function activateUI(name, emoji, avc, status) {
   document.getElementById('h-st').textContent = status;
 }
 
+// ═══════════════════════════
+// FIREBASE MESSAGES
+// ═══════════════════════════
 function detachFb() { if (msgsOff) { msgsOff(); msgsOff=null; } }
 
 function listenFbMsgs(path) {
@@ -872,7 +978,7 @@ function listenFbMsgs(path) {
     window._dbFns.orderByChild('ts'),
     window._dbFns.limitToLast(120)
   );
-  window._dbFns.onChildAdded(q, snap => {
+  const unsub = window._dbFns.onChildAdded(q, snap => {
     appendMsg(box, snap.val());
     box.scrollTop = box.scrollHeight;
   });
@@ -904,6 +1010,9 @@ function appendMsg(box, msg) {
   box.appendChild(row);
 }
 
+// ═══════════════════════════
+// BOT MESSAGES
+// ═══════════════════════════
 function renderBotMsgs() {
   const box=document.getElementById('msgs');
   box.innerHTML='';
@@ -935,6 +1044,9 @@ function appendBotNode(box,msg) {
   box.appendChild(row);
 }
 
+// ═══════════════════════════
+// SEND
+// ═══════════════════════════
 async function sendMsg() {
   const inp=document.getElementById('mi2');
   const text=inp.value.trim();
@@ -963,6 +1075,9 @@ async function sendMsg() {
   } catch(e) { toast('Помилка: '+e.message); }
 }
 
+// ═══════════════════════════
+// TYPING
+// ═══════════════════════════
 function onTyp() {
   if (!currentChat||currentChat.type==='bot') return;
   const p=`typing/${currentChat.id}/${currentUser.uid}`;
@@ -975,6 +1090,9 @@ function clearTyp() {
   window._dbFns.set(window._dbFns.ref(window._db,`typing/${currentChat.id}/${currentUser.uid}`),null);
 }
 
+// ═══════════════════════════
+// BOT REPLY
+// ═══════════════════════════
 function botReplySchedule(txt) {
   const cid=currentChat?.id, b=currentChat?.bd;
   if(!b) return;
@@ -1004,49 +1122,95 @@ function botGen(t) {
   return rnd(R.pos);
 }
 
+// ═══════════════════════════
+// ACTIONS
+// ═══════════════════════════
 function poke() {
   if(!currentChat) return;
-  if(currentChat.type==='bot') {
-    const box=document.getElementById('msgs');
-    const m={uid:'bot',emoji:currentChat.emoji,sn:currentChat.name,text:'Ой! Ти мене штовхнув 😂👉',ts2:nows(),type:'msg'};
-    botHistory[currentChat.id]?.push(m); appendBotNode(box,m); box.scrollTop=box.scrollHeight; return;
-  }
+  if(currentChat.type==='bot') { const box=document.getElementById('msgs'); const m={uid:'bot',emoji:currentChat.emoji,sn:currentChat.name,text:'Ой! Ти мене штовхнув 😂👉',ts2:nows(),type:'msg'}; botHistory[currentChat.id]?.push(m); appendBotNode(box,m); box.scrollTop=box.scrollHeight; return; }
   const p=currentChat.type==='dm'?`dms/${currentChat.id}`:`rooms/${currentChat.id}`;
   window._dbFns.push(window._dbFns.ref(window._db,p),{uid:currentUser.uid,sn:myProfile.displayName,emoji:myProfile.emoji,text:`${myProfile.emoji} ${myProfile.displayName} штовхнув усіх! 👉😂`,ts2:nows(),ts:Date.now(),type:'msg'});
 }
-
 function clearView() { document.getElementById('msgs').innerHTML=''; toast('Чат очищено локально 🗑️'); }
 
+// ═══════════════════════════
+// UTILS
+// ═══════════════════════════
 function qi(e) { const i=document.getElementById('mi2'); const p=i.selectionStart; i.value=i.value.slice(0,p)+e+i.value.slice(p); i.selectionStart=i.selectionEnd=p+e.length; i.focus(); }
 function hkey(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();} }
 function agrow(el) { el.style.height=''; el.style.height=Math.min(el.scrollHeight,120)+'px'; }
 function esc(s) { if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function rnd(a) { return a[~~(Math.random()*a.length)]; }
 function nows() { const d=new Date(); return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0'); }
-let toastT;
-function toast(m) { const el=document.getElementById('toast'); el.textContent=m; el.style.display='block'; clearTimeout(toastT); toastT=setTimeout(()=>{el.style.display='none';},3200); }
+let toastT; function toast(m) { const el=document.getElementById('toast'); el.textContent=m; el.style.display='block'; clearTimeout(toastT); toastT=setTimeout(()=>{el.style.display='none';},3200); }
 
-// ── MOBILE BURGER — FIXED ──
-function mobOpen() {
-  document.getElementById('sb').classList.add('open');
-  document.getElementById('mob-dim').classList.add('show');
-  // FIX: removed ca.style.visibility='hidden' — was blocking chat interaction
+// ═══════════════════════════════════════
+// TELEGRAM-STYLE MOBILE NAVIGATION
+// ═══════════════════════════════════════
+function isMobile(){ return window.innerWidth <= 680; }
+
+// Open chat view (slide list left, chat in from right)
+function openChatMobile(){
+  if(!isMobile()) return;
+  document.getElementById('app').classList.add('mob-chat-open');
 }
 
-function mobClose() {
-  document.getElementById('sb').classList.remove('open');
-  document.getElementById('mob-dim').classList.remove('show');
-  // FIX: removed ca.style.visibility='visible' — no longer needed
+// Go back to chat list (slide chat out, list back in)
+function closeSidebar(){
+  if(!isMobile()) return;
+  document.getElementById('app').classList.remove('mob-chat-open');
 }
 
+// Legacy aliases (kept for any existing calls)
+function openSidebar(){ closeSidebar(); }
+
+// Back button: go back to list
+document.getElementById('mob-back').addEventListener('click', closeSidebar);
+
+// Swipe-right to go back
+(function(){
+  let startX=0, startY=0;
+  const ca = document.getElementById('ca');
+  ca.addEventListener('touchstart', e=>{
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+  }, {passive:true});
+  ca.addEventListener('touchend', e=>{
+    const dx = e.changedTouches[0].clientX - startX;
+    const dy = Math.abs(e.changedTouches[0].clientY - startY);
+    if(dx > 60 && dy < 60 && startX < 40) closeSidebar();
+  }, {passive:true});
+})();
+
+function syncMobileUI(){
+  if(!isMobile()){
+    document.getElementById('app').classList.remove('mob-chat-open');
+  }
+}
+window.addEventListener('resize', syncMobileUI);
+
+// Patch activateUI to open chat on mobile
+const _origActivateUI = activateUI;
+window.__activateUI_patched = true;
+// Override via reassignment (avoids hoisting issues)
+const activateUI_orig = activateUI;
+// We patch openDM/openRoom/openBot directly instead:
+const _openDM_orig = openDM;
+const _openRoom_orig = openRoom;
+const _openBot_orig = openBot;
+function openDM(u){ _openDM_orig(u); if(isMobile()) openChatMobile(); }
+function openRoom(r){ _openRoom_orig(r); if(isMobile()) openChatMobile(); }
+function openBot(b){ _openBot_orig(b); if(isMobile()) openChatMobile(); }
+
+// Enter on auth
 document.addEventListener('keydown',e=>{
   if(e.key!=='Enter') return;
   const as=document.getElementById('auth-screen');
-  if(as.style.display==='none') return;
-  if(document.getElementById('li-form').style.display!=='none') doLogin();
-  else doRegister();
+  if(as.style.display==='flex'||as.style.display===''){
+    if(document.getElementById('li-form').style.display!=='none') doLogin();
+    else doRegister();
+  }
 });
 </script>
-
 </body>
 </html>
