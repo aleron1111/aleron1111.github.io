@@ -306,7 +306,7 @@ body{
     overflow:hidden;
   }
 
-  /* ── SIDEBAR: full-screen drawer ── */
+  /* ── SIDEBAR: full-screen drawer, HIDDEN by default ── */
   #sb{
     position:fixed;
     top:0;left:0;bottom:0;
@@ -314,11 +314,13 @@ body{
     z-index:20;
     transform:translateX(-100%);
     transition:transform .3s cubic-bezier(.4,0,.2,1);
-    box-shadow:8px 0 48px rgba(0,0,0,.7);
-    /* Safe area padding top for notch/Dynamic Island */
+    box-shadow:none;
     padding-top:max(env(safe-area-inset-top), 0px);
   }
-  #sb.mob-open{transform:translateX(0);}
+  #sb.mob-open{
+    transform:translateX(0);
+    box-shadow:8px 0 48px rgba(0,0,0,.7);
+  }
 
   /* Sidebar header padding */
   #sbh{padding:14px 14px 12px;}
@@ -604,6 +606,7 @@ body{
       </svg>
       <h2>Обери чат щоб розпочати 🚀</h2>
       <p>Вибери реального юзера, публічну кімнату або чатни з AI-ботом.</p>
+      <p id="welc-mob-hint" style="display:none;font-size:.8rem;color:var(--accent);margin-top:4px">Натисни ☰ щоб відкрити список чатів</p>
     </div>
 
 ```
@@ -1175,10 +1178,13 @@ function closeSidebar(){
 
 function syncMobileUI(){
   const ham = document.getElementById('mob-ham');
+  const hint = document.getElementById('welc-mob-hint');
   if(isMobile()){
     ham.style.display = 'flex';
+    if(hint) hint.style.display = 'block';
   } else {
     ham.style.display = 'none';
+    if(hint) hint.style.display = 'none';
     closeSidebar();
   }
 }
