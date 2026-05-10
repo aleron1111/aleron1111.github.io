@@ -282,7 +282,7 @@ body{
 #mob-back:active{background:rgba(196,77,255,.3);}
 
 /* ── MOBILE OVERLAY ── */
-#mob-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:19;opacity:0;pointer-events:none;visibility:hidden;transition:opacity .3s,visibility .3s;}
+#mob-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:19;transition:opacity .3s;}
 
 /* ── MOBILE HAMBURGER (hidden on desktop) ── */
 #mob-ham{display:none;}
@@ -323,9 +323,7 @@ body{
   /* Sidebar header padding */
   #sbh{padding:14px 14px 12px;}
 
-  /* Overlay — hidden by default, shown only when sidebar open */
-  #mob-overlay{opacity:0;pointer-events:none;visibility:hidden;}
-  #mob-overlay.vis{opacity:1;pointer-events:all;visibility:visible;}
+  /* Overlay created dynamically by JS when sidebar opens */
 
   /* Chat area: full width */
   #ca{
@@ -457,7 +455,6 @@ body{
 </head>
 <body>
 <div id="bgp"></div>
-<div id="mob-overlay" onclick="closeSidebar()"></div>
 <button id="mob-ham" onclick="openSidebar()" style="display:none">☰</button>
 
 <!-- FIREBASE NOTICE -->
@@ -1159,34 +1156,34 @@ function isMobile(){ return window.innerWidth <= 768; }
 function openSidebar(){
   if(!isMobile()) return;
   document.getElementById('sb').classList.add('mob-open');
-  document.getElementById('mob-overlay').classList.add('vis');
-}
-function closeSidebar(){
-  document.getElementById('sb').classList.remove('mob-open');
-  document.getElementById('mob-overlay').classList.remove('vis');
+  // Create overlay fresh each time
+  let ov = document.getElementById('mob-overlay');
+  if(!ov){
+    ov = document.createElement('div');
+    ov.id = 'mob-overlay';
+    ov.onclick = closeSidebar;
+    document.body.appendChild(ov);
+  }
 }
 
-// Show/hide hamburger based on viewport
+function closeSidebar(){
+  document.getElementById('sb').classList.remove('mob-open');
+  // Remove overlay from DOM completely
+  const ov = document.getElementById('mob-overlay');
+  if(ov) ov.remove();
+}
+
 function syncMobileUI(){
   const ham = document.getElementById('mob-ham');
   if(isMobile()){
     ham.style.display = 'flex';
   } else {
     ham.style.display = 'none';
-    document.getElementById('sb').classList.remove('mob-open');
-    document.getElementById('mob-overlay').classList.remove('vis');
+    closeSidebar();
   }
 }
 window.addEventListener('resize', syncMobileUI);
 window.addEventListener('load', syncMobileUI);
-
-// On mobile: auto-close sidebar when chat opens
-const _origActivateUI = activateUI;
-// Patch openDM/openRoom/openBot to close sidebar on mobile
-const _patchChat = fn => function(){
-  fn.apply(this, arguments);
-  if(isMobile()) closeSidebar();
-};
 
 // Enter on auth
 document.addEventListener('keydown',e=>{
