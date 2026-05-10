@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -12,7 +13,7 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, si
 import { getDatabase, ref, push, set, get, onValue, onChildAdded, serverTimestamp, query, orderByChild, limitToLast, off } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 // ═══════════════════════════════════════════════
-// 🔥 FIREBASE CONFIG — REPLACE WITH YOUR OWN! 
+// 🔥 FIREBASE CONFIG — REPLACE WITH YOUR OWN!
 // Get it free at: https://console.firebase.google.com
 // ═══════════════════════════════════════════════
 const firebaseConfig = {
@@ -271,16 +272,71 @@ body{
 .av6{background:linear-gradient(135deg,#608020,#a0c030);}
 .av7{background:linear-gradient(135deg,#205050,#30a0a0);}
 
-@media(max-width:600px){
-  #sb{width:62px;min-width:62px;}
-  .lt,.ls,.mi,.lo,.stabs,.sw,.sl,.um,.ut,.badge{display:none;}
-  .ui{justify-content:center;padding:10px;}
-  #mec{justify-content:center;padding:8px;}
+/* ── MOBILE BACK BUTTON ── */
+#mob-back{display:none;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid var(--border);color:var(--text);font-size:1.1rem;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .2s;}
+#mob-back:hover{background:rgba(196,77,255,.2);}
+
+/* ── MOBILE OVERLAY ── */
+#mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:19;backdrop-filter:blur(3px);}
+
+@media(max-width:680px){
+  /* Stack layout: sidebar slides over chat */
+  #app{position:relative;overflow:hidden;}
+
+  /* Sidebar: slide-in drawer */
+  #sb{
+    position:fixed;top:0;left:0;bottom:0;
+    width:82vw;max-width:320px;min-width:0;
+    z-index:20;
+    transform:translateX(-100%);
+    transition:transform .28s cubic-bezier(.4,0,.2,1);
+    box-shadow:6px 0 40px rgba(0,0,0,.6);
+  }
+  #sb.mob-open{transform:translateX(0);}
+  #mob-overlay{display:block;}
+  #mob-overlay.vis{display:block;opacity:1;}
+  #mob-overlay:not(.vis){opacity:0;pointer-events:none;transition:opacity .28s;}
+
+  /* Chat takes full width */
+  #ca{width:100%;min-width:0;flex:1;}
+
+  /* Header: show hamburger + back button */
+  #chdr{padding:10px 13px;}
+  #mob-back{display:flex;}
+
+  /* Hamburger button */
+  #mob-ham{
+    display:flex;width:36px;height:36px;border-radius:50%;
+    background:rgba(255,255,255,.07);border:1px solid var(--border);
+    color:var(--text);font-size:1.1rem;align-items:center;justify-content:center;
+    cursor:pointer;flex-shrink:0;transition:background .2s;
+    position:fixed;top:12px;left:12px;z-index:15;
+    box-shadow:0 2px 12px rgba(0,0,0,.4);
+  }
+
+  /* Welcome screen: add top padding for hamburger */
+  #welc{padding-top:60px;}
+
+  /* Messages: tighter padding */
+  #msgs{padding:12px 10px;}
+
+  /* Input area: tighter */
+  #ia{padding:8px 10px 12px;}
+  .qr{gap:4px;}
+  .qe{font-size:1.08rem;}
+
+  /* Bubbles: wider on mobile */
+  .mc{max-width:78%;}
+
+  /* Header name truncation */
+  .hn{font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;}
 }
 </style>
 </head>
 <body>
 <div id="bgp"></div>
+<div id="mob-overlay" onclick="closeSidebar()"></div>
+<button id="mob-ham" onclick="openSidebar()" style="display:none">☰</button>
 
 <!-- FIREBASE NOTICE -->
 <div id="firebase-notice">
@@ -424,6 +480,7 @@ body{
     </div>
 
     <div id="chdr" style="display:none">
+      <div id="mob-back" onclick="openSidebar()" title="Назад">‹</div>
       <div class="hav" id="h-av">?</div>
       <div><div class="hn" id="h-nm">Name</div><div class="hs" id="h-st">Online</div></div>
       <div class="ha">
@@ -747,6 +804,7 @@ function openDM(user) {
   activateUI(user.displayName, user.emoji, AVC[user.colorIdx||0], user.online?'🟢 Онлайн':'⚫ Офлайн');
   listenFbMsgs('dms/'+id);
   renderUsers();
+  if(isMobile()) closeSidebar();
 }
 
 function openRoom(r) {
@@ -754,6 +812,7 @@ function openRoom(r) {
   activateUI(r.name, r.emoji, 'av0', r.desc);
   listenFbMsgs('rooms/'+r.id);
   buildRooms();
+  if(isMobile()) closeSidebar();
 }
 
 function openBot(b) {
@@ -762,6 +821,7 @@ function openBot(b) {
   activateUI(b.name+' 🤖', b.emoji, AVC[b.col], 'AI • Завжди онлайн');
   renderBotMsgs();
   buildBots();
+  if(isMobile()) closeSidebar();
 }
 
 function activateUI(name, emoji, avc, status) {
@@ -957,6 +1017,43 @@ function esc(s) { if(!s) return ''; return String(s).replace(/&/g,'&amp;').repla
 function rnd(a) { return a[~~(Math.random()*a.length)]; }
 function nows() { const d=new Date(); return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0'); }
 let toastT; function toast(m) { const el=document.getElementById('toast'); el.textContent=m; el.style.display='block'; clearTimeout(toastT); toastT=setTimeout(()=>{el.style.display='none';},3200); }
+
+// ═══════════════════════════
+// MOBILE SIDEBAR
+// ═══════════════════════════
+function isMobile(){ return window.innerWidth <= 680; }
+
+function openSidebar(){
+  if(!isMobile()) return;
+  document.getElementById('sb').classList.add('mob-open');
+  document.getElementById('mob-overlay').classList.add('vis');
+}
+function closeSidebar(){
+  document.getElementById('sb').classList.remove('mob-open');
+  document.getElementById('mob-overlay').classList.remove('vis');
+}
+
+// Show/hide hamburger based on viewport
+function syncMobileUI(){
+  const ham = document.getElementById('mob-ham');
+  if(isMobile()){
+    ham.style.display = 'flex';
+  } else {
+    ham.style.display = 'none';
+    document.getElementById('sb').classList.remove('mob-open');
+    document.getElementById('mob-overlay').classList.remove('vis');
+  }
+}
+window.addEventListener('resize', syncMobileUI);
+window.addEventListener('load', syncMobileUI);
+
+// On mobile: auto-close sidebar when chat opens
+const _origActivateUI = activateUI;
+// Patch openDM/openRoom/openBot to close sidebar on mobile
+const _patchChat = fn => function(){
+  fn.apply(this, arguments);
+  if(isMobile()) closeSidebar();
+};
 
 // Enter on auth
 document.addEventListener('keydown',e=>{
