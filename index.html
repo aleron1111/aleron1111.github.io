@@ -9,27 +9,21 @@
 <title>🍆 DickChat — Real Messenger</title>
 <link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
 
-<!-- Firebase SDK -->
-
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getDatabase, ref, push, set, get, onValue, onChildAdded, serverTimestamp, query, orderByChild, limitToLast, off } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-// ═══════════════════════════════════════════════
-// 🔥 FIREBASE CONFIG — REPLACE WITH YOUR OWN!
-// Get it free at: https://console.firebase.google.com
-// ═══════════════════════════════════════════════
 const firebaseConfig = {
-   apiKey: "AIzaSyBUxOr3GMXiyz18rdLVTKxvgixgPQfy0gs",
-   authDomain: "dihhchat.firebaseapp.com",
-   databaseURL: "https://dihhchat-default-rtdb.europe-west1.firebasedatabase.app",
-   projectId: "dihhchat",
-   storageBucket: "dihhchat.firebasestorage.app",
-   messagingSenderId: "953790212417",
-   appId: "1:953790212417:web:bae9943327c2f1753b99c0",
-   measurementId: "G-PQKS0RD1QZ"
- };
+  apiKey: "AIzaSyBUxOr3GMXiyz18rdLVTKxvgixgPQfy0gs",
+  authDomain: "dihhchat.firebaseapp.com",
+  databaseURL: "https://dihhchat-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "dihhchat",
+  storageBucket: "dihhchat.firebasestorage.app",
+  messagingSenderId: "953790212417",
+  appId: "1:953790212417:web:bae9943327c2f1753b99c0",
+  measurementId: "G-PQKS0RD1QZ"
+};
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -69,12 +63,10 @@ body{
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
 
-/* BG */
 #bgp{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
 #bgp span{position:absolute;opacity:.04;animation:fup linear infinite;font-size:1.8rem;will-change:transform;}
 @keyframes fup{from{transform:translateY(110vh) rotate(0deg);}to{transform:translateY(-10vh) rotate(360deg);}}
 
-/* ── FIREBASE NOTICE ── */
 #firebase-notice{
   position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.92);
   display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);
@@ -100,7 +92,6 @@ body{
 }
 .nc-btn:hover{transform:translateY(-2px);}
 
-/* ── AUTH ── */
 #auth-screen{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;background:var(--bg);}
 .ac{
   background:var(--panel);border:2px solid var(--border);border-radius:24px;
@@ -135,7 +126,6 @@ body{
 .abtn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(196,77,255,.55);}
 #auth-err{color:var(--danger);font-size:.82rem;text-align:center;margin-top:8px;min-height:18px;}
 
-/* ── SETUP ── */
 #setup-screen{position:fixed;inset:0;z-index:49;display:none;align-items:center;justify-content:center;background:var(--bg);}
 .sc{
   background:var(--panel);border:2px solid var(--border);border-radius:24px;
@@ -151,10 +141,8 @@ body{
 .eo.sel{border-color:var(--accent);background:rgba(196,77,255,.15);}
 #setup-err{color:var(--danger);font-size:.82rem;margin-top:8px;}
 
-/* ── APP ── */
 #app{display:none;flex:1;height:100vh;overflow:hidden;}
 
-/* SIDEBAR */
 #sb{
   width:285px;min-width:285px;background:var(--panel2);
   border-right:2px solid var(--border);display:flex;flex-direction:column;
@@ -213,7 +201,6 @@ body{
 .ut{font-size:.65rem;color:var(--text-dim);}
 .badge{background:var(--accent);color:#fff;font-size:.62rem;font-weight:800;min-width:18px;height:18px;border-radius:9px;display:flex;align-items:center;justify-content:center;padding:0 4px;flex-shrink:0;}
 
-/* CHAT */
 #ca{flex:1;display:flex;flex-direction:column;min-width:0;position:relative;z-index:5;}
 #chdr{padding:12px 17px;border-bottom:2px solid var(--border);background:var(--panel);display:flex;align-items:center;gap:12px;flex-shrink:0;box-shadow:0 2px 20px rgba(0,0,0,.3);}
 .hav{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0;border:2px solid var(--border);}
@@ -277,14 +264,13 @@ body{
 .av7{background:linear-gradient(135deg,#205050,#30a0a0);}
 
 /* ══════════════════════════════════
-   MOBILE — burger drawer (Telegram-style)
+   MOBILE — burger drawer
    ══════════════════════════════════ */
 #mob-ham{display:none;}
 
 @media(max-width:700px){
-
-  /* ── Body & App ── */
   html,body{height:100%;height:-webkit-fill-available;overflow:hidden;}
+
   #app{
     position:fixed;inset:0;
     width:100%;height:100%;
@@ -292,12 +278,12 @@ body{
     overflow:hidden;
   }
 
-  /* ── Sidebar: slide-in drawer, starts hidden ── */
+  /* ── Sidebar: slide-in drawer ── */
   #sb{
     position:fixed;
     top:0;left:0;bottom:0;
     width:80vw;max-width:300px;
-    z-index:30;
+    z-index:40;
     transform:translateX(-100%);
     transition:transform .28s cubic-bezier(.4,0,.2,1);
     background:var(--panel2);
@@ -311,21 +297,28 @@ body{
     box-shadow:4px 0 30px rgba(0,0,0,.6);
   }
 
-  /* ── Dark tap-to-close area ── */
+  /* ── FIX: overlay uses opacity+pointer-events instead of display:none ── */
   #mob-dim{
-    display:none;
-    position:fixed;inset:0;
-    background:rgba(0,0,0,.5);
-    z-index:29;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.55);
+    z-index:39;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .28s cubic-bezier(.4,0,.2,1);
+    /* NO display:none — avoids iOS rendering glitch */
   }
-  #mob-dim.show{display:block;}
+  #mob-dim.show{
+    opacity:1;
+    pointer-events:auto;
+  }
 
   /* ── Burger button ── */
   #mob-ham{
     display:flex;
     position:fixed;
     top:10px;left:10px;
-    z-index:25;
+    z-index:45;
     width:40px;height:40px;
     border-radius:50%;
     background:var(--panel2);
@@ -338,18 +331,18 @@ body{
     -webkit-tap-highlight-color:transparent;
   }
 
-  /* ── Chat area: full screen ── */
+  /* ── Chat area: full screen, always visible ── */
   #ca{
     position:fixed;
     inset:0;
     display:flex;flex-direction:column;
     overflow:hidden;
     z-index:1;
+    /* FIX: never hide chat area — removing visibility:hidden from mobOpen() */
   }
 
-  /* ── Chat header ── */
   #chdr{
-    padding:10px 10px 10px 60px; /* left space for burger */
+    padding:10px 10px 10px 60px;
     flex-shrink:0;
     gap:8px;
   }
@@ -359,7 +352,6 @@ body{
   .ib{width:32px;height:32px;font-size:.85rem;}
   .ha{gap:5px;}
 
-  /* ── Welcome screen ── */
   #welc{
     padding-top:70px;
     padding-left:16px;padding-right:16px;
@@ -367,7 +359,6 @@ body{
   #welc h2{font-size:1.3rem;}
   #welc p{font-size:.82rem;}
 
-  /* ── Messages ── */
   #msgs{
     flex:1;
     overflow-y:auto;overflow-x:hidden;
@@ -380,10 +371,8 @@ body{
   .mt{font-size:.6rem;}
   .msn{font-size:.63rem;}
 
-  /* ── Typing bar ── */
   #tyb{padding:2px 10px;flex-shrink:0;font-size:.72rem;}
 
-  /* ── Input area ── */
   #ia{
     flex-shrink:0;
     padding:7px 8px;
@@ -402,13 +391,11 @@ body{
   #mi2{font-size:.88rem;padding:9px 12px;border-radius:20px;}
   #sb2{width:40px;height:40px;font-size:1rem;flex-shrink:0;}
 
-  /* ── Toast ── */
   #toast{
     bottom:max(calc(env(safe-area-inset-bottom)+60px),70px);
     right:12px;left:12px;max-width:none;text-align:center;
   }
 
-  /* ── Auth/Setup screens ── */
   .ac,.sc{width:90vw;max-width:380px;padding:26px 18px;}
 }
 </style>
@@ -418,8 +405,6 @@ body{
 <div id="bgp"></div>
 <button id="mob-ham" onclick="mobOpen()" aria-label="Menu">☰</button>
 <div id="mob-dim" onclick="mobClose()"></div>
-
-<!-- FIREBASE NOTICE -->
 
 <div id="firebase-notice" style="display:none">
   <div class="nc">
@@ -439,8 +424,6 @@ body{
     <button class="nc-btn" onclick="this.closest('#firebase-notice').style.display='none'">Зрозумів, піду налаштовую →</button>
   </div>
 </div>
-
-<!-- AUTH SCREEN -->
 
 <div id="auth-screen">
   <div class="ac">
@@ -478,8 +461,6 @@ body{
   </div>
 </div>
 
-<!-- SETUP SCREEN -->
-
 <div id="setup-screen">
   <div class="sc">
     <div style="font-size:3rem;margin-bottom:8px">🎉</div>
@@ -496,10 +477,7 @@ body{
   </div>
 </div>
 
-<!-- MAIN APP -->
-
 <div id="app">
-  <!-- SIDEBAR -->
   <div id="sb">
     <div id="sbh">
       <div class="lr">
@@ -540,12 +518,10 @@ body{
   <div class="sl">Реальні юзери</div>
   <div id="ul"><div style="padding:16px;text-align:center;color:var(--text-dim);font-size:.82rem">Завантаження…</div></div>
 </div>
-
 <div class="ls-sec" id="tab-rms" style="display:none">
   <div class="sl">Публічні кімнати</div>
   <div id="rl"></div>
 </div>
-
 <div class="ls-sec" id="tab-bot" style="display:none">
   <div class="sl">AI Компаньйони</div>
   <div id="bl"></div>
@@ -553,8 +529,6 @@ body{
 ```
 
   </div>
-
-  <!-- CHAT AREA -->
 
   <div id="ca">
     <div id="welc">
@@ -608,9 +582,6 @@ body{
 <div id="toast"></div>
 
 <script>
-// ═══════════════════════════
-// STATE
-// ═══════════════════════════
 let currentUser = null;
 let myProfile = null;
 let currentChat = null;
@@ -630,11 +601,11 @@ const ROOMS = [
 ];
 
 const BOTS = [
-  {id:'bot_anna',name:'Anna',  emoji:'🌸',desc:'Позитивчик ✨',  col:1},
-  {id:'bot_max', name:'Max',   emoji:'🏋️',desc:'Бро-качок 💪',  col:2},
-  {id:'bot_zara',name:'Zara',  emoji:'🔮',desc:'Містика 🌙',    col:5},
-  {id:'bot_dima',name:'Dima',  emoji:'🎮',desc:'Гамер 🕹️',     col:3},
-  {id:'bot_leo', name:'Leo',   emoji:'🦁',desc:'Кінг 👑',       col:4},
+  {id:'bot_anna',name:'Anna',  emoji:'🌸',desc:'Позитивчик ✨',col:1},
+  {id:'bot_max', name:'Max',   emoji:'🏋️',desc:'Бро-качок 💪', col:2},
+  {id:'bot_zara',name:'Zara',  emoji:'🔮',desc:'Містика 🌙',   col:5},
+  {id:'bot_dima',name:'Dima',  emoji:'🎮',desc:'Гамер 🕹️',    col:3},
+  {id:'bot_leo', name:'Leo',   emoji:'🦁',desc:'Кінг 👑',      col:4},
 ];
 
 const R = {
@@ -648,20 +619,11 @@ const R = {
 
 const botHistory = {};
 
-// ═══════════════════════════
-// INIT
-// ═══════════════════════════
 window.addEventListener('load', () => {
   initBg();
   buildEG();
   buildRooms();
   buildBots();
-  // Auto-hide notice if config replaced (firebase module sets _firebaseReady)
-  setTimeout(() => {
-    if (!window._firebaseReady) {
-      // Still showing notice — config not replaced yet
-    }
-  }, 2000);
 });
 
 function initBg() {
@@ -677,6 +639,7 @@ function initBg() {
 
 function buildEG() {
   const g = document.getElementById('eg');
+  if (!g || g.children.length) return;
   EMOJIS.forEach((e,i) => {
     const d = document.createElement('div');
     d.className = 'eo'+(i===0?' sel':'');
@@ -686,9 +649,6 @@ function buildEG() {
   });
 }
 
-// ═══════════════════════════
-// AUTH
-// ═══════════════════════════
 function showAuth() {
   document.getElementById('auth-screen').style.display = 'flex';
   document.getElementById('setup-screen').style.display = 'none';
@@ -742,14 +702,10 @@ async function doLogout() {
   await window._authFns.signOut(window._auth);
 }
 
-// ═══════════════════════════
-// SHOW APP
-// ═══════════════════════════
 async function showApp(user) {
   currentUser = user;
   document.getElementById('auth-screen').style.display = 'none';
   document.getElementById('firebase-notice').style.display = 'none';
-
   const snap = await window._dbFns.get(window._dbFns.ref(window._db,`users/${user.uid}`));
   if (!snap.exists()||!snap.val().displayName) {
     document.getElementById('setup-screen').style.display = 'flex';
@@ -757,18 +713,6 @@ async function showApp(user) {
   }
   myProfile = snap.val();
   launchApp();
-}
-
-function buildEG() {
-  const g = document.getElementById('eg');
-  if (!g||g.children.length) return;
-  EMOJIS.forEach((e,i) => {
-    const d = document.createElement('div');
-    d.className='eo'+(i===0?' sel':'');
-    d.textContent=e;
-    d.onclick=()=>{ document.querySelectorAll('.eo').forEach(x=>x.classList.remove('sel')); d.classList.add('sel'); };
-    g.appendChild(d);
-  });
 }
 
 async function doSetup() {
@@ -798,9 +742,6 @@ function launchApp() {
   buildBots();
 }
 
-// ═══════════════════════════
-// USERS
-// ═══════════════════════════
 function listenUsers() {
   window._dbFns.onValue(window._dbFns.ref(window._db,'users'), snap => {
     allUsers = {};
@@ -841,9 +782,6 @@ function renderUsers(f='') {
 
 function dmId(a,b) { return [a,b].sort().join('_'); }
 
-// ═══════════════════════════
-// ROOMS & BOTS
-// ═══════════════════════════
 function buildRooms() {
   const rl = document.getElementById('rl');
   if (!rl) return;
@@ -870,9 +808,6 @@ function buildBots() {
   });
 }
 
-// ═══════════════════════════
-// SIDEBAR TABS
-// ═══════════════════════════
 function swSidTab(t) {
   ['ppl','rms','bot'].forEach(x=>{
     document.getElementById('tab-'+x).style.display = x===t?'flex':'none';
@@ -885,9 +820,6 @@ function doSearch(v) {
   if (document.getElementById('tab-ppl').style.display!=='none') renderUsers(v);
 }
 
-// ═══════════════════════════
-// OPEN CHAT
-// ═══════════════════════════
 function openDM(user) {
   const id = dmId(currentUser.uid, user.uid);
   currentChat = {type:'dm',id,name:user.displayName,emoji:user.emoji,col:user.colorIdx||0};
@@ -928,9 +860,6 @@ function activateUI(name, emoji, avc, status) {
   document.getElementById('h-st').textContent = status;
 }
 
-// ═══════════════════════════
-// FIREBASE MESSAGES
-// ═══════════════════════════
 function detachFb() { if (msgsOff) { msgsOff(); msgsOff=null; } }
 
 function listenFbMsgs(path) {
@@ -943,7 +872,7 @@ function listenFbMsgs(path) {
     window._dbFns.orderByChild('ts'),
     window._dbFns.limitToLast(120)
   );
-  const unsub = window._dbFns.onChildAdded(q, snap => {
+  window._dbFns.onChildAdded(q, snap => {
     appendMsg(box, snap.val());
     box.scrollTop = box.scrollHeight;
   });
@@ -975,9 +904,6 @@ function appendMsg(box, msg) {
   box.appendChild(row);
 }
 
-// ═══════════════════════════
-// BOT MESSAGES
-// ═══════════════════════════
 function renderBotMsgs() {
   const box=document.getElementById('msgs');
   box.innerHTML='';
@@ -1009,9 +935,6 @@ function appendBotNode(box,msg) {
   box.appendChild(row);
 }
 
-// ═══════════════════════════
-// SEND
-// ═══════════════════════════
 async function sendMsg() {
   const inp=document.getElementById('mi2');
   const text=inp.value.trim();
@@ -1040,9 +963,6 @@ async function sendMsg() {
   } catch(e) { toast('Помилка: '+e.message); }
 }
 
-// ═══════════════════════════
-// TYPING
-// ═══════════════════════════
 function onTyp() {
   if (!currentChat||currentChat.type==='bot') return;
   const p=`typing/${currentChat.id}/${currentUser.uid}`;
@@ -1055,9 +975,6 @@ function clearTyp() {
   window._dbFns.set(window._dbFns.ref(window._db,`typing/${currentChat.id}/${currentUser.uid}`),null);
 }
 
-// ═══════════════════════════
-// BOT REPLY
-// ═══════════════════════════
 function botReplySchedule(txt) {
   const cid=currentChat?.id, b=currentChat?.bd;
   if(!b) return;
@@ -1087,42 +1004,41 @@ function botGen(t) {
   return rnd(R.pos);
 }
 
-// ═══════════════════════════
-// ACTIONS
-// ═══════════════════════════
 function poke() {
   if(!currentChat) return;
-  if(currentChat.type==='bot') { const box=document.getElementById('msgs'); const m={uid:'bot',emoji:currentChat.emoji,sn:currentChat.name,text:'Ой! Ти мене штовхнув 😂👉',ts2:nows(),type:'msg'}; botHistory[currentChat.id]?.push(m); appendBotNode(box,m); box.scrollTop=box.scrollHeight; return; }
+  if(currentChat.type==='bot') {
+    const box=document.getElementById('msgs');
+    const m={uid:'bot',emoji:currentChat.emoji,sn:currentChat.name,text:'Ой! Ти мене штовхнув 😂👉',ts2:nows(),type:'msg'};
+    botHistory[currentChat.id]?.push(m); appendBotNode(box,m); box.scrollTop=box.scrollHeight; return;
+  }
   const p=currentChat.type==='dm'?`dms/${currentChat.id}`:`rooms/${currentChat.id}`;
   window._dbFns.push(window._dbFns.ref(window._db,p),{uid:currentUser.uid,sn:myProfile.displayName,emoji:myProfile.emoji,text:`${myProfile.emoji} ${myProfile.displayName} штовхнув усіх! 👉😂`,ts2:nows(),ts:Date.now(),type:'msg'});
 }
+
 function clearView() { document.getElementById('msgs').innerHTML=''; toast('Чат очищено локально 🗑️'); }
 
-// ═══════════════════════════
-// UTILS
-// ═══════════════════════════
 function qi(e) { const i=document.getElementById('mi2'); const p=i.selectionStart; i.value=i.value.slice(0,p)+e+i.value.slice(p); i.selectionStart=i.selectionEnd=p+e.length; i.focus(); }
 function hkey(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();} }
 function agrow(el) { el.style.height=''; el.style.height=Math.min(el.scrollHeight,120)+'px'; }
 function esc(s) { if(!s) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function rnd(a) { return a[~~(Math.random()*a.length)]; }
 function nows() { const d=new Date(); return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0'); }
-let toastT; function toast(m) { const el=document.getElementById('toast'); el.textContent=m; el.style.display='block'; clearTimeout(toastT); toastT=setTimeout(()=>{el.style.display='none';},3200); }
+let toastT;
+function toast(m) { const el=document.getElementById('toast'); el.textContent=m; el.style.display='block'; clearTimeout(toastT); toastT=setTimeout(()=>{el.style.display='none';},3200); }
 
-// ── MOBILE BURGER ──
-function mobOpen(){
+// ── MOBILE BURGER — FIXED ──
+function mobOpen() {
   document.getElementById('sb').classList.add('open');
   document.getElementById('mob-dim').classList.add('show');
-  document.getElementById('ca').style.visibility='hidden';
+  // FIX: removed ca.style.visibility='hidden' — was blocking chat interaction
 }
-function mobClose(){
+
+function mobClose() {
   document.getElementById('sb').classList.remove('open');
   document.getElementById('mob-dim').classList.remove('show');
-  document.getElementById('ca').style.visibility='visible';
+  // FIX: removed ca.style.visibility='visible' — no longer needed
 }
-function isMob(){ return window.innerWidth <= 700; }
 
-// Enter on auth
 document.addEventListener('keydown',e=>{
   if(e.key!=='Enter') return;
   const as=document.getElementById('auth-screen');
