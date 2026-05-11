@@ -867,6 +867,7 @@ function launchApp() {
   buildRooms();
   buildBots();
   restoreLastChat();
+  maybeAskNotifPermission();
 }
 
 // ═══════════════════════════
@@ -1063,8 +1064,19 @@ function listenFbMsgs(path) {
     window._dbFns.limitToLast(120)
   );
   const unsub = window._dbFns.onChildAdded(q, snap => {
-    appendMsg(box, snap.val());
+    const msg = snap.val();
+    appendMsg(box, msg);
     box.scrollTop = box.scrollHeight;
+    // Notify if message is from someone else
+    if (msg.uid && msg.uid !== currentUser?.uid && msg.text) {
+      const senderName = msg.sn || allUsers[msg.uid]?.displayName || 'Хтось';
+      const senderEmoji = msg.emoji || allUsers[msg.uid]?.emoji || '🍆';
+      sendNotification(
+        `${senderEmoji} ${senderName}`,
+        msg.text.length > 60 ? msg.text.slice(0, 60) + '…' : msg.text,
+        'msg-' + msg.uid
+      );
+    }
   });
   msgsOff = ()=>window._dbFns.off(q);
 }
@@ -1229,8 +1241,49 @@ function nows() { const d=new Date(); return d.getHours().toString().padStart(2,
 let toastT; function toast(m) { const el=document.getElementById('toast'); el.textContent=m; el.style.display='block'; clearTimeout(toastT); toastT=setTimeout(()=>{el.style.display='none';},3200); }
 
 // ═══════════════════════════
-// MOBILE UI
+// PUSH NOTIFICATIONS
 // ═══════════════════════════
+let swReg = null;
+
+async function initNotifications() {
+  if (!('serviceWorker' in navigator) || !('Notification' in window)) return;
+  try {
+    swReg = await navigator.serviceWorker.register('/sw.js');
+    console.log('SW registered');
+  } catch(e) { console.warn('SW failed:', e); }
+}
+
+async function requestNotifPermission() {
+  if (!('Notification' in window)) return false;
+  if (Notification.permission === 'granted') return true;
+  if (Notification.permission === 'denied') return false;
+  const result = await Notification.requestPermission();
+  return result === 'granted';
+}
+
+function sendNotification(title, body, tag) {
+  if (document.visibilityState === 'visible') return; // Only when app is in background
+  if (Notification.permission !== 'granted') return;
+  if (swReg) {
+    navigator.serviceWorker.ready.then(reg => {
+      reg.active?.postMessage({ type: 'SHOW_NOTIFICATION', title, body, tag });
+    });
+  } else {
+    new Notification(title, { body, icon: '/icon.png', tag, renotify: true });
+  }
+}
+
+// Ask permission after user interacts
+function maybeAskNotifPermission() {
+  if (Notification.permission === 'default') {
+    setTimeout(async () => {
+      const granted = await requestNotifPermission();
+      if (granted) console.log('Notifications enabled!');
+    }, 3000);
+  }
+}
+
+initNotifications();
 function isMobile(){ return window.innerWidth <= 680; }
 
 function openSidebar(){
