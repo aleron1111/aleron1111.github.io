@@ -111,7 +111,21 @@ body{
 .nc-btn:hover{transform:translateY(-2px);}
 
 /* ── AUTH ── */
-/* ── LOADING SCREEN ── */
+/* Prevent iOS text selection artifacts outside inputs */
+#app, #welc, #msgs, #chdr, #sb, .ui, .bub, .mr{
+  -webkit-touch-callout: none;
+}
+#msgs, #welc, #chdr, #sb .ui{
+  -webkit-user-select: none;
+  user-select: none;
+}
+/* Allow selection only inside message bubbles for copy */
+.bub{
+  -webkit-user-select: text;
+  user-select: text;
+}
+/* Hide tap highlight */
+* { -webkit-tap-highlight-color: transparent; }
 #loading-screen{
   position:fixed;inset:0;z-index:100;
   background:var(--bg);
