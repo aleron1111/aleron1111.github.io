@@ -38,9 +38,16 @@ window._db = db;
 window._dbFns = { ref, push, set, get, onValue, onChildAdded, serverTimestamp, query, orderByChild, limitToLast, off, onDisconnect };
 window._authFns = { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged };
 
+function hideLoading() {
+  const el = document.getElementById('loading-screen');
+  if (!el) return;
+  el.classList.add('hide');
+  setTimeout(() => el.remove(), 500);
+}
+
 onAuthStateChanged(auth, user => {
   window._firebaseReady = true;
-  
+  hideLoading();
   if (user) { window.currentUser = user; showApp(user); }
   else { window.currentUser = null; showAuth(); }
 });
@@ -104,6 +111,29 @@ body{
 .nc-btn:hover{transform:translateY(-2px);}
 
 /* ── AUTH ── */
+/* ── LOADING SCREEN ── */
+#loading-screen{
+  position:fixed;inset:0;z-index:100;
+  background:var(--bg);
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:20px;
+  transition:opacity .5s ease;
+}
+#loading-screen.hide{opacity:0;pointer-events:none;}
+.ls-logo{font-size:3.8rem;animation:ls-bounce .9s ease-in-out infinite alternate;}
+.ls-title{font-family:'Pacifico',cursive;font-size:2.2rem;color:var(--accent);letter-spacing:1px;}
+.ls-sub{font-size:.75rem;color:var(--text-dim);letter-spacing:3px;text-transform:uppercase;margin-top:-14px;}
+.ls-bar{width:160px;height:3px;background:rgba(255,255,255,.08);border-radius:10px;overflow:hidden;margin-top:10px;}
+.ls-fill{height:100%;width:35%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:10px;animation:ls-slide 1.3s ease-in-out infinite;}
+.ls-dots{display:flex;gap:8px;margin-top:6px;}
+.ls-dots span{width:7px;height:7px;border-radius:50%;background:var(--accent);opacity:.3;animation:ls-dot .9s ease-in-out infinite;}
+.ls-dots span:nth-child(2){animation-delay:.2s;}
+.ls-dots span:nth-child(3){animation-delay:.4s;}
+@keyframes ls-bounce{from{transform:translateY(0) scale(1);}to{transform:translateY(-14px) scale(1.12);}}
+@keyframes ls-slide{0%{transform:translateX(-100%);}100%{transform:translateX(420%);}}
+@keyframes ls-dot{0%,100%{opacity:.3;transform:scale(1);}50%{opacity:1;transform:scale(1.35);}}
+
 #auth-screen{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;background:var(--bg);}
 .ac{
   background:var(--panel);border:2px solid var(--border);border-radius:24px;
@@ -426,6 +456,16 @@ body{
 <!-- FIREBASE NOTICE REMOVED - config already set -->
 
 <!-- AUTH SCREEN -->
+
+<!-- LOADING SCREEN -->
+
+<div id="loading-screen">
+  <div class="ls-logo">🍆</div>
+  <div class="ls-title">DickChat</div>
+  <div class="ls-sub">Rise &amp; Connect</div>
+  <div class="ls-bar"><div class="ls-fill"></div></div>
+  <div class="ls-dots"><span></span><span></span><span></span></div>
+</div>
 
 <div id="auth-screen">
   <div class="ac">
