@@ -716,6 +716,7 @@ function ferr(c) {
 }
 
 async function doLogout() {
+  clearInterval(window._heartbeat);
   if (myProfile && window._db) {
     const now = Date.now();
     window._dbFns.set(window._dbFns.ref(window._db,`users/${currentUser.uid}/online`), false);
@@ -768,13 +769,23 @@ async function doSetup() {
 }
 
 function launchApp() {
-  window._dbFns.set(window._dbFns.ref(window._db,`users/${currentUser.uid}/online`), true);
-  // Auto-offline when browser closes
-  const userRef = window._dbFns.ref(window._db, `users/${currentUser.uid}`);
-  const disc = window._dbFns.onDisconnect ? window._dbFns.onDisconnect(userRef) : null;
-  if (disc) {
-    disc.update({ online: false, lastSeen: Date.now() });
+  const myRef = window._dbFns.ref(window._db, `users/${currentUser.uid}`);
+
+  // Set online + heartbeat timestamp
+  function setOnline() {
+    window._dbFns.set(window._dbFns.ref(window._db,`users/${currentUser.uid}/online`), true);
+    window._dbFns.set(window._dbFns.ref(window._db,`users/${currentUser.uid}/lastSeen`), Date.now());
   }
+  setOnline();
+  // Heartbeat every 60s so lastSeen stays fresh
+  window._heartbeat = setInterval(setOnline, 60000);
+
+  // onDisconnect: Firebase server sets offline when connection drops
+  try {
+    const disc = window._dbFns.onDisconnect(myRef);
+    disc.update({ online: false, lastSeen: Date.now() });
+  } catch(e){}
+
   const mav = document.getElementById('me-av');
   mav.textContent = myProfile.emoji;
   mav.className = `mav ${AVC[myProfile.colorIdx||0]}`;
@@ -818,14 +829,15 @@ function renderUsers(f='') {
     const d   = document.createElement('div');
     d.className = 'ui'+(currentChat?.id===cid?' active':'');
     d.onclick = ()=>openDM(u);
+    const isOnline = u.online && u.lastSeen && (Date.now() - u.lastSeen < 180000);
     d.innerHTML = `
       <div class="ua ${AVC[u.colorIdx||0]}" style="position:relative">
         ${esc(u.emoji||'👤')}
-        <div class="odt${u.online?'':' off'}"></div>
+        <div class="odt${isOnline?'':' off'}"></div>
       </div>
       <div class="um">
         <div class="un">${esc(u.displayName)}</div>
-        <div class="up">${u.online?'🟢 Онлайн':formatLastSeen(u.lastSeen)}</div>
+        <div class="up">${isOnline?'🟢 Онлайн':formatLastSeen(u.lastSeen)}</div>
       </div>
       ${b>0?`<div class="badge">${b}</div>`:''}
     `;
@@ -899,7 +911,8 @@ function openDM(user) {
   const id = dmId(currentUser.uid, user.uid);
   currentChat = {type:'dm',id,name:user.displayName,emoji:user.emoji,col:user.colorIdx||0};
   unread[id] = 0;
-  activateUI(user.displayName, user.emoji, AVC[user.colorIdx||0], user.online?'🟢 Онлайн':formatLastSeen(user.lastSeen));
+  const isOnline = user.online && user.lastSeen && (Date.now() - user.lastSeen < 180000);
+  activateUI(user.displayName, user.emoji, AVC[user.colorIdx||0], isOnline?'🟢 Онлайн':formatLastSeen(user.lastSeen));
   listenFbMsgs('dms/'+id);
   renderUsers();
   if(isMobile()) closeSidebar();
