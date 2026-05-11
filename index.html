@@ -190,7 +190,7 @@ body{
 .lo:hover{background:rgba(255,68,102,.22);}
 
 .stabs{display:flex;border-bottom:2px solid var(--border);flex-shrink:0;}
-.stab{flex:1;padding:10px 4px;text-align:center;font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--text-dim);cursor:pointer;transition:all .2s;border-bottom:3px solid transparent;}
+.stab{flex:1;padding:10px 4px 7px;text-align:center;font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--text-dim);cursor:pointer;transition:all .2s;border-bottom:3px solid transparent;box-sizing:border-box;}
 .stab.active{color:var(--accent);border-bottom-color:var(--accent);}
 .stab:hover:not(.active){color:var(--text);background:rgba(255,255,255,.03);}
 
@@ -207,9 +207,9 @@ body{
 
 .ls-sec{flex:1;overflow-y:auto;}
 .sl{padding:7px 13px 3px;font-size:.63rem;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--text-dim);}
-.ui{display:flex;align-items:center;gap:10px;padding:9px 13px;cursor:pointer;transition:background .15s;position:relative;}
+.ui{display:flex;align-items:center;gap:10px;padding:9px 13px;cursor:pointer;transition:background .15s;position:relative;box-sizing:border-box;}
 .ui:hover{background:rgba(255,255,255,.04);}
-.ui.active{background:rgba(196,77,255,.18);border-left:3px solid var(--accent);}
+.ui.active{background:rgba(196,77,255,.18);box-shadow:inset 3px 0 0 var(--accent);}
 .ua{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;border:2px solid var(--border);position:relative;}
 .um{flex:1;min-width:0;}
 .un{font-weight:700;font-size:.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -303,12 +303,6 @@ body{
   #mob-overlay{display:block;opacity:0;pointer-events:none;transition:opacity .3s;}
   #mob-overlay.vis{opacity:1;pointer-events:all;}
   #ca{width:100%;min-width:0;flex:1;}
-
-  /* Fix active item — border-left shifts content, use box-shadow instead */
-  .ui.active{
-    border-left:none;
-    box-shadow:inset 3px 0 0 var(--accent);
-  }
 
   /* All list items full width, no overflow */
   .ui{ padding:10px 14px; width:100%; box-sizing:border-box; }
