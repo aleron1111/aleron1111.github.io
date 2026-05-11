@@ -71,16 +71,17 @@ document.addEventListener('DOMContentLoaded', () => {
 html,body{height:100%;overflow:hidden;}
 body{
   font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);
-  display:flex;height:100vh;
+  display:flex;height:100vh;overflow:hidden;
   background-image:radial-gradient(ellipse at 15% 25%,rgba(130,30,220,.2) 0%,transparent 55%),
     radial-gradient(ellipse at 85% 75%,rgba(255,60,140,.12) 0%,transparent 55%);
 }
+#app{overflow:hidden;position:relative;}
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
 
 /* BG */
-#bgp{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;clip-path:inset(0);}
+#bgp{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
 #bgp span{position:absolute;opacity:.035;animation:fup linear infinite;font-size:1.8rem;will-change:transform;}
 @keyframes fup{from{transform:translateY(110vh) rotate(0deg);}to{transform:translateY(-10vh) rotate(360deg);}}
 
@@ -465,13 +466,8 @@ body{
 
 </head>
 <body>
-<div id="bgp"></div>
 <div id="mob-overlay" onclick="closeSidebar()"></div>
 <button id="mob-ham" onclick="openSidebar()">☰</button>
-
-<!-- FIREBASE NOTICE REMOVED - config already set -->
-
-<!-- AUTH SCREEN -->
 
 <!-- LOADING SCREEN -->
 
@@ -540,6 +536,7 @@ body{
 <!-- MAIN APP -->
 
 <div id="app">
+  <div id="bgp"></div>
   <!-- SIDEBAR -->
   <div id="sb">
     <div id="sbh">
