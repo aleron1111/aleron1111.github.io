@@ -75,8 +75,7 @@ body{
   background-image:radial-gradient(ellipse at 15% 25%,rgba(130,30,220,.2) 0%,transparent 55%),
     radial-gradient(ellipse at 85% 75%,rgba(255,60,140,.12) 0%,transparent 55%);
 }
-#app{overflow:hidden;position:relative;}
-::-webkit-scrollbar{width:4px;height:4px;}
+#app{display:none;flex:1;height:100vh;overflow:hidden;position:relative;transform:translateZ(0);}::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
 
@@ -210,9 +209,11 @@ body{
 /* SIDEBAR */
 #sb{
   width:285px;min-width:285px;background:var(--panel2);
-  border-right:2px solid var(--border);display:flex;flex-direction:column;
-  position:relative;z-index:10;box-shadow:4px 0 40px rgba(0,0,0,.4);
+  box-shadow:1px 0 0 var(--border), 4px 0 40px rgba(0,0,0,.4);
+  display:flex;flex-direction:column;
+  position:relative;z-index:10;
   isolation:isolate;
+  transform:translateZ(0);
 }
 #sbh{
   padding:15px 13px 12px;border-bottom:2px solid var(--border);
@@ -1261,9 +1262,10 @@ async function requestNotifPermission() {
   return result === 'granted';
 }
 
-function sendNotification(title, body, tag) {
-  if (document.visibilityState === 'visible') return; // Only when app is in background
+function sendNotification(title, body, tag, chatId) {
   if (Notification.permission !== 'granted') return;
+  // Skip if this message is in the currently open chat
+  if (document.visibilityState === 'visible' && currentChat?.id === chatId) return;
   if (swReg) {
     navigator.serviceWorker.ready.then(reg => {
       reg.active?.postMessage({ type: 'SHOW_NOTIFICATION', title, body, tag });
