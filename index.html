@@ -80,6 +80,11 @@ body{
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
 
+@media(max-width:680px){
+  ::-webkit-scrollbar{display:none;}
+  * { scrollbar-width:none; }
+}
+
 /* BG */
 #bgp{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
 #bgp span{position:absolute;opacity:.035;animation:fup linear infinite;font-size:1.8rem;will-change:transform;}
