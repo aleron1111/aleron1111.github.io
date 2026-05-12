@@ -125,7 +125,11 @@ body{
 .nc-btn:hover{transform:translateY(-2px);}
 
 /* ── AUTH ── */
-/* Photo messages */
+/* Read receipts */
+.ticks{display:inline-flex;gap:1px;margin-left:3px;vertical-align:middle;}
+.tick{font-size:.65rem;color:rgba(255,255,255,.4);line-height:1;}
+.ticks.delivered .tick{color:rgba(255,255,255,.5);}
+.ticks.read .tick{color:#4fc3f7;}
 .msg-img{max-width:260px;max-height:320px;border-radius:14px;cursor:pointer;display:block;object-fit:cover;margin-top:2px;}
 .msg-img:hover{opacity:.9;}
 .upload-progress{height:3px;background:rgba(255,255,255,.1);border-radius:3px;margin-top:4px;overflow:hidden;}
@@ -1113,8 +1117,22 @@ function listenFbMsgs(path) {
   );
   const unsub = window._dbFns.onChildAdded(q, snap => {
     const msg = snap.val();
-    appendMsg(box, msg);
+    const key = snap.key;
+    appendMsg(box, msg, key);
     box.scrollTop = box.scrollHeight;
+
+    // Mark as read if message is from someone else
+    if (msg.uid && msg.uid !== currentUser?.uid) {
+      const readRef = window._dbFns.ref(window._db, `${path}/${key}/readBy/${currentUser.uid}`);
+      window._dbFns.set(readRef, true);
+    }
+
+    // Mark sender's message as delivered
+    if (msg.uid && msg.uid !== currentUser?.uid) {
+      const delivRef = window._dbFns.ref(window._db, `${path}/${key}/delivered`);
+      window._dbFns.set(delivRef, true);
+    }
+
     // Notify if message is from someone else
     if (msg.uid && msg.uid !== currentUser?.uid && msg.text) {
       const senderName = msg.sn || allUsers[msg.uid]?.displayName || 'Хтось';
@@ -1126,6 +1144,21 @@ function listenFbMsgs(path) {
       );
     }
   });
+
+  // Listen for read/delivered updates on existing messages
+  window._dbFns.onValue(window._dbFns.ref(window._db, path), snap => {
+    const msgs = snap.val() || {};
+    Object.entries(msgs).forEach(([key, msg]) => {
+      if (msg.uid !== currentUser?.uid) return;
+      const row = box.querySelector(`[data-msgkey="${key}"]`);
+      if (!row) return;
+      const mt = row.querySelector('.mt');
+      if (!mt) return;
+      const time = mt.textContent.replace(/[✓]/g, '').trim();
+      mt.innerHTML = `${esc(time)}${ticksHtml(msg, true)}`;
+    });
+  });
+
   msgsOff = ()=>window._dbFns.off(q);
 }
 
@@ -1135,7 +1168,16 @@ function addDiv(box, label) {
   box.appendChild(d);
 }
 
-function appendMsg(box, msg) {
+function ticksHtml(msg, isMe) {
+  if (!isMe) return '';
+  const read = msg.readBy && Object.keys(msg.readBy).some(uid => uid !== currentUser.uid);
+  const delivered = msg.delivered || read;
+  const cls = read ? 'read' : delivered ? 'delivered' : '';
+  const two = delivered || read;
+  return `<span class="ticks ${cls}"><span class="tick">✓</span>${two?'<span class="tick">✓</span>':''}</span>`;
+}
+
+function appendMsg(box, msg, msgKey) {
   if (msg.type==='sys') {
     const d=document.createElement('div'); d.className='sm'; d.textContent=msg.text; box.appendChild(d); return;
   }
@@ -1144,6 +1186,7 @@ function appendMsg(box, msg) {
   const avc = isMe ? AVC[myProfile?.colorIdx||0] : (allUsers[msg.uid]?AVC[allUsers[msg.uid].colorIdx||0]:'av0');
   const row = document.createElement('div');
   row.className='mr '+(isMe?'me':'them');
+  if (msgKey) row.dataset.msgkey = msgKey;
   const content = msg.imageUrl
     ? `<img class="msg-img" src="${esc(msg.imageUrl)}" data-url="${esc(msg.imageUrl)}" onclick="openLightbox(this.dataset.url)" loading="lazy">`
     : `<div class="bub${oe?' eo':''}">${esc(msg.text)}</div>`;
@@ -1152,7 +1195,7 @@ function appendMsg(box, msg) {
     <div class="mc">
       ${!isMe?`<div class="msn">${esc(msg.sn||'User')}</div>`:''}
       ${content}
-      <div class="mt">${esc(msg.ts2||'')}${isMe?' <span>✓✓</span>':''}</div>
+      <div class="mt">${esc(msg.ts2||'')}${ticksHtml(msg, isMe)}</div>
     </div>`;
   box.appendChild(row);
 }
