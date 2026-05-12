@@ -941,34 +941,44 @@ function listenUsers() {
 
 const _unreadOff = {};
 function listenUnread() {
-  // For each user, listen to DM with me
   Object.values(allUsers).forEach(u => {
     if (u.uid === currentUser.uid) return;
     const cid = dmId(currentUser.uid, u.uid);
-    if (_unreadOff[cid]) return; // already listening
-
-    const q = window._dbFns.query(
-      window._dbFns.ref(window._db, 'dms/'+cid),
-      window._dbFns.orderByChild('ts'),
-      window._dbFns.limitToLast(50)
-    );
+    if (_unreadOff[cid]) return;
     _unreadOff[cid] = true;
 
-    window._dbFns.onChildAdded(q, snap => {
-      const msg = snap.val();
-      const key = snap.key;
-      // Only count messages from the other user that I haven't read
-      if (!msg || msg.uid === currentUser.uid) return;
-      const alreadyRead = msg.readBy && msg.readBy[currentUser.uid];
-      if (alreadyRead) return;
-      // If this chat is currently open — mark as read immediately
-      if (currentChat?.id === cid) {
-        window._dbFns.set(window._dbFns.ref(window._db, `dms/${cid}/${key}/readBy/${currentUser.uid}`), true);
-        return;
+    // First load existing unread count
+    window._dbFns.get(window._dbFns.ref(window._db, 'dms/'+cid)).then(snap => {
+      const msgs = snap.val() || {};
+      let count = 0;
+      Object.values(msgs).forEach(msg => {
+        if (msg.uid === currentUser.uid) return;
+        if (msg.readBy && msg.readBy[currentUser.uid]) return;
+        count++;
+      });
+      if (count > 0) {
+        unread[cid] = count;
+        renderUsers();
       }
-      // Otherwise increment unread
-      unread[cid] = (unread[cid] || 0) + 1;
-      renderUsers();
+
+      // Then listen for new messages after now
+      const q = window._dbFns.query(
+        window._dbFns.ref(window._db, 'dms/'+cid),
+        window._dbFns.orderByChild('ts'),
+        window._dbFns.limitToLast(1)
+      );
+      window._dbFns.onChildAdded(q, snap => {
+        const msg = snap.val();
+        const key = snap.key;
+        if (!msg || msg.uid === currentUser.uid) return;
+        if (msg.readBy && msg.readBy[currentUser.uid]) return;
+        if (currentChat?.id === cid) {
+          window._dbFns.set(window._dbFns.ref(window._db, `dms/${cid}/${key}/readBy/${currentUser.uid}`), true);
+          return;
+        }
+        unread[cid] = (unread[cid] || 0) + 1;
+        renderUsers();
+      });
     });
   });
 }
