@@ -4,6 +4,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta http-equiv="Referrer-Policy" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.gstatic.com https://firebasestorage.googleapis.com; script-src 'self' 'unsafe-inline' https://*.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: https://firebasestorage.googleapis.com blob:; connect-src 'self' https://*.firebaseio.com wss://*.firebaseio.com https://*.googleapis.com https://firebasestorage.googleapis.com;">
 <title>🍆 DickChat — Real Messenger</title>
 <link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
 
@@ -777,7 +781,28 @@ function swAuthTab(t) {
 
 function setErr(msg) { document.getElementById('auth-err').textContent = msg; }
 
+// ── Security helpers ──
+const _attempts = {};
+function rateLimit(key, max, windowMs) {
+  const now = Date.now();
+  if (!_attempts[key]) _attempts[key] = [];
+  _attempts[key] = _attempts[key].filter(t => now - t < windowMs);
+  if (_attempts[key].length >= max) return false;
+  _attempts[key].push(now);
+  return true;
+}
+function sanitizeText(s) {
+  return String(s||'').trim().slice(0, 2000);
+}
+function validateNick(nm) {
+  if (!nm || nm.length < 2) return 'Нікнейм мінімум 2 символи.';
+  if (nm.length > 24) return 'Нікнейм максимум 24 символи.';
+  if (!/^[\p{L}\p{N}_.\- ]+$/u.test(nm)) return 'Нікнейм містить заборонені символи.';
+  return null;
+}
+
 async function doLogin() {
+  if (!rateLimit('login', 5, 60000)) return setErr('Забагато спроб. Зачекай хвилину.');
   const em = document.getElementById('li-em').value.trim();
   const pw = document.getElementById('li-pw').value;
   if (!em||!pw) return setErr('Заповни всі поля.');
@@ -786,12 +811,14 @@ async function doLogin() {
 }
 
 async function doRegister() {
+  if (!rateLimit('register', 3, 300000)) return setErr('Забагато спроб реєстрації. Зачекай 5 хвилин.');
   const em  = document.getElementById('re-em').value.trim();
   const pw  = document.getElementById('re-pw').value;
   const pw2 = document.getElementById('re-pw2').value;
   if (!em||!pw) return setErr('Заповни всі поля.');
   if (pw!==pw2) return setErr('Паролі не збігаються.');
   if (pw.length<6) return setErr('Пароль мінімум 6 символів.');
+  if (pw.length>128) return setErr('Пароль занадто довгий.');
   try { await window._authFns.createUserWithEmailAndPassword(window._auth, em, pw); }
   catch(e) { setErr(ferr(e.code)); }
 }
@@ -847,11 +874,12 @@ function buildEG() {
 }
 
 async function doSetup() {
-  const nm = document.getElementById('su-nm').value.trim();
+  const nm = sanitizeText(document.getElementById('su-nm').value);
   const em = document.querySelector('.eo.sel')?.textContent||'🍆';
   const e  = document.getElementById('su-err');
-  if (!nm) { e.textContent='Введи нікнейм!'; return; }
-  const prof = {uid:currentUser.uid,email:currentUser.email,displayName:nm,emoji:em,colorIdx:~~(Math.random()*AVC.length),online:true,joined:Date.now()};
+  const nickErr = validateNick(nm);
+  if (nickErr) { e.textContent = nickErr; return; }
+  const prof = {uid:currentUser.uid, email:currentUser.email, displayName:nm, emoji:em, colorIdx:~~(Math.random()*AVC.length), online:true, joined:Date.now()};
   try {
     await window._dbFns.set(window._dbFns.ref(window._db,`users/${currentUser.uid}`), prof);
     myProfile = prof;
@@ -1118,14 +1146,14 @@ function appendMsg(box, msg) {
   const row = document.createElement('div');
   row.className='mr '+(isMe?'me':'them');
   const content = msg.imageUrl
-    ? `<img class="msg-img" src="${msg.imageUrl}" onclick="openLightbox('${msg.imageUrl}')" loading="lazy">`
+    ? `<img class="msg-img" src="${esc(msg.imageUrl)}" data-url="${esc(msg.imageUrl)}" onclick="openLightbox(this.dataset.url)" loading="lazy">`
     : `<div class="bub${oe?' eo':''}">${esc(msg.text)}</div>`;
   row.innerHTML=`
     <div class="mav2 ${avc}">${esc(msg.emoji||'👤')}</div>
     <div class="mc">
       ${!isMe?`<div class="msn">${esc(msg.sn||'User')}</div>`:''}
       ${content}
-      <div class="mt">${msg.ts2||''}${isMe?' <span>✓✓</span>':''}</div>
+      <div class="mt">${esc(msg.ts2||'')}${isMe?' <span>✓✓</span>':''}</div>
     </div>`;
   box.appendChild(row);
 }
@@ -1169,8 +1197,9 @@ function appendBotNode(box,msg) {
 // ═══════════════════════════
 async function sendMsg() {
   const inp=document.getElementById('mi2');
-  const text=inp.value.trim();
+  const text=sanitizeText(inp.value);
   if (!text||!currentChat) return;
+  if (!rateLimit('msg', 10, 5000)) { showToast('Повільніше! 🐢'); return; }
   inp.value=''; inp.style.height='';
 
   if (currentChat.type==='bot') {
