@@ -130,9 +130,9 @@ body{
 #photo-btn{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.07);border:1.5px solid var(--border);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .2s;}
 #photo-btn:hover{background:rgba(196,77,255,.2);}
 /* Lightbox */
-#lightbox{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.92);align-items:center;justify-content:center;cursor:zoom-out;}
-#lightbox img{max-width:95vw;max-height:90vh;border-radius:12px;object-fit:contain;}
+#lightbox{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.95);align-items:center;justify-content:center;touch-action:none;}
 #lightbox.open{display:flex;}
+#lightbox img{max-width:95vw;max-height:90vh;border-radius:12px;object-fit:contain;transform-origin:center;transition:transform .1s;will-change:transform;}
 #app, #welc, #msgs, #chdr, #sb, .ui, .bub, .mr{
   -webkit-touch-callout: none;
 }
@@ -1317,8 +1317,85 @@ async function uploadPhoto(input) {
 }
 
 function openLightbox(url) {
-  document.getElementById('lightbox-img').src = url;
-  document.getElementById('lightbox').classList.add('open');
+  const lb = document.getElementById('lightbox');
+  const img = document.getElementById('lightbox-img');
+  img.src = url;
+  lb.classList.add('open');
+
+  // Reset state
+  let scale = 1, lastScale = 1;
+  let tx = 0, ty = 0, lastTx = 0, lastTy = 0;
+  let startDist = 0, startScale = 1;
+  let startX = 0, startY = 0;
+  let isDragging = false;
+
+  function applyTransform(animated) {
+    img.style.transition = animated ? 'transform .2s' : 'none';
+    img.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+  }
+
+  function getDist(t) {
+    return Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+  }
+  function getMid(t) {
+    return { x: (t[0].clientX + t[1].clientX) / 2, y: (t[0].clientY + t[1].clientY) / 2 };
+  }
+
+  img.ontouchstart = e => {
+    if (e.touches.length === 2) {
+      startDist = getDist(e.touches);
+      startScale = scale;
+      const mid = getMid(e.touches);
+      startX = mid.x; startY = mid.y;
+      lastTx = tx; lastTy = ty;
+    } else if (e.touches.length === 1 && scale > 1) {
+      isDragging = true;
+      startX = e.touches[0].clientX - tx;
+      startY = e.touches[0].clientY - ty;
+    }
+  };
+
+  img.ontouchmove = e => {
+    e.preventDefault();
+    if (e.touches.length === 2) {
+      const d = getDist(e.touches);
+      scale = Math.min(Math.max(startScale * (d / startDist), 1), 5);
+      const mid = getMid(e.touches);
+      tx = lastTx + (mid.x - startX);
+      ty = lastTy + (mid.y - startY);
+      applyTransform(false);
+    } else if (isDragging && e.touches.length === 1) {
+      tx = e.touches[0].clientX - startX;
+      ty = e.touches[0].clientY - startY;
+      applyTransform(false);
+    }
+  };
+
+  img.ontouchend = e => {
+    isDragging = false;
+    if (scale < 1.05) { scale = 1; tx = 0; ty = 0; applyTransform(true); }
+  };
+
+  // Double tap to zoom
+  let lastTap = 0;
+  img.onclick = e => {
+    const now = Date.now();
+    if (now - lastTap < 300) {
+      if (scale > 1) { scale = 1; tx = 0; ty = 0; }
+      else { scale = 2.5; }
+      applyTransform(true);
+    }
+    lastTap = now;
+  };
+
+  // Close on background tap
+  lb.onclick = e => {
+    if (e.target === lb) {
+      scale = 1; tx = 0; ty = 0;
+      img.style.transform = '';
+      lb.classList.remove('open');
+    }
+  };
 }
 
 // ═══════════════════════════
