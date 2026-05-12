@@ -13,6 +13,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getDatabase, ref, push, set, get, onValue, onChildAdded, serverTimestamp, query, orderByChild, limitToLast, off, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import { getStorage, ref as sref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
 // ═══════════════════════════════════════════════
 // 🔥 FIREBASE CONFIG — REPLACE WITH YOUR OWN!
@@ -32,9 +33,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
+const storage = getStorage(app);
 
 window._auth = auth;
 window._db = db;
+window._storage = storage;
+window._sref = sref;
+window._uploadBytesResumable = uploadBytesResumable;
+window._getDownloadURL = getDownloadURL;
 window._dbFns = { ref, push, set, get, onValue, onChildAdded, serverTimestamp, query, orderByChild, limitToLast, off, onDisconnect };
 window._authFns = { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged };
 
@@ -116,7 +122,17 @@ body{
 .nc-btn:hover{transform:translateY(-2px);}
 
 /* ── AUTH ── */
-/* Prevent iOS text selection artifacts outside inputs */
+/* Photo messages */
+.msg-img{max-width:260px;max-height:320px;border-radius:14px;cursor:pointer;display:block;object-fit:cover;margin-top:2px;}
+.msg-img:hover{opacity:.9;}
+.upload-progress{height:3px;background:rgba(255,255,255,.1);border-radius:3px;margin-top:4px;overflow:hidden;}
+.upload-progress-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:3px;transition:width .2s;}
+#photo-btn{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.07);border:1.5px solid var(--border);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .2s;}
+#photo-btn:hover{background:rgba(196,77,255,.2);}
+/* Lightbox */
+#lightbox{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.92);align-items:center;justify-content:center;cursor:zoom-out;}
+#lightbox img{max-width:95vw;max-height:90vh;border-radius:12px;object-fit:contain;}
+#lightbox.open{display:flex;}
 #app, #welc, #msgs, #chdr, #sb, .ui, .bub, .mr{
   -webkit-touch-callout: none;
 }
@@ -648,10 +664,12 @@ body{
     <span class="qe" onclick="qi('🎉')">🎉</span>
   </div>
   <div class="ir">
-    <textarea id="mi2" placeholder="Написати повідомлення… 🍆" rows="1"
-      onkeydown="hkey(event)" oninput="agrow(this);onTyp()"></textarea>
-    <button id="sb2" onclick="sendMsg()">➤</button>
-  </div>
+      <button class="ib" id="photo-btn" onclick="document.getElementById('photo-input').click()" title="Фото">📷</button>
+      <input type="file" id="photo-input" accept="image/*" style="display:none" onchange="uploadPhoto(this)">
+      <textarea id="mi2" placeholder="Написати повідомлення… 🍆" rows="1"
+        onkeydown="hkey(event)" oninput="agrow(this);onTyp()"></textarea>
+      <button id="sb2" onclick="sendMsg()">➤</button>
+    </div>
 </div>
 ```
 
@@ -659,6 +677,7 @@ body{
 </div>
 
 <div id="toast"></div>
+<div id="lightbox" onclick="this.classList.remove('open')"><img id="lightbox-img" src=""></div>
 
 <script>
 // ═══════════════════════════
@@ -1094,15 +1113,18 @@ function appendMsg(box, msg) {
     const d=document.createElement('div'); d.className='sm'; d.textContent=msg.text; box.appendChild(d); return;
   }
   const isMe = msg.uid===currentUser?.uid;
-  const oe = /^\p{Emoji}+$/u.test((msg.text||'').trim())&&msg.text.trim().length<=8;
+  const oe = !msg.imageUrl && /^\p{Emoji}+$/u.test((msg.text||'').trim())&&msg.text.trim().length<=8;
   const avc = isMe ? AVC[myProfile?.colorIdx||0] : (allUsers[msg.uid]?AVC[allUsers[msg.uid].colorIdx||0]:'av0');
   const row = document.createElement('div');
   row.className='mr '+(isMe?'me':'them');
+  const content = msg.imageUrl
+    ? `<img class="msg-img" src="${msg.imageUrl}" onclick="openLightbox('${msg.imageUrl}')" loading="lazy">`
+    : `<div class="bub${oe?' eo':''}">${esc(msg.text)}</div>`;
   row.innerHTML=`
     <div class="mav2 ${avc}">${esc(msg.emoji||'👤')}</div>
     <div class="mc">
       ${!isMe?`<div class="msn">${esc(msg.sn||'User')}</div>`:''}
-      <div class="bub${oe?' eo':''}">${esc(msg.text)}</div>
+      ${content}
       <div class="mt">${msg.ts2||''}${isMe?' <span>✓✓</span>':''}</div>
     </div>`;
   box.appendChild(row);
@@ -1241,6 +1263,63 @@ function esc(s) { if(!s) return ''; return String(s).replace(/&/g,'&amp;').repla
 function rnd(a) { return a[~~(Math.random()*a.length)]; }
 function nows() { const d=new Date(); return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0'); }
 let toastT; function toast(m) { const el=document.getElementById('toast'); el.textContent=m; el.style.display='block'; clearTimeout(toastT); toastT=setTimeout(()=>{el.style.display='none';},3200); }
+
+// ═══════════════════════════
+// PHOTO UPLOAD
+// ═══════════════════════════
+async function uploadPhoto(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 10 * 1024 * 1024) { showToast('Максимум 10MB!'); return; }
+  if (!currentChat) { showToast('Спочатку відкрий чат!'); return; }
+
+  const box = document.getElementById('msgs');
+  const placeholder = document.createElement('div');
+  placeholder.className = 'mr me';
+  placeholder.innerHTML = `
+    <div class="mc"><div class="bub" style="min-width:140px">
+      📷 Завантаження…
+      <div class="upload-progress"><div class="upload-progress-bar" id="upbar" style="width:0%"></div></div>
+    </div></div>
+    <div class="mav2 ${AVC[myProfile.colorIdx||0]}">${myProfile.emoji}</div>
+  `;
+  box.appendChild(placeholder);
+  box.scrollTop = box.scrollHeight;
+
+  try {
+    const path = `chats/${currentChat.id}/${Date.now()}_${file.name}`;
+    const storageRef = window._sref(window._storage, path);
+    const uploadTask = window._uploadBytesResumable(storageRef, file);
+
+    uploadTask.on('state_changed',
+      snap => {
+        const pct = Math.round(snap.bytesTransferred / snap.totalBytes * 100);
+        const bar = document.getElementById('upbar');
+        if (bar) bar.style.width = pct + '%';
+      },
+      err => { placeholder.remove(); showToast('Помилка завантаження 😢'); },
+      async () => {
+        const url = await window._getDownloadURL(uploadTask.snapshot.ref);
+        placeholder.remove();
+        const p = myProfile;
+        const msgData = {
+          uid: currentUser.uid, sn: p.displayName, emoji: p.emoji,
+          colorIdx: p.colorIdx||0, imageUrl: url, text: '📷 Фото',
+          ts: Date.now(),
+          ts2: new Date().toLocaleTimeString('uk-UA',{hour:'2-digit',minute:'2-digit'})
+        };
+        const dbPath = currentChat.type==='room' ? 'rooms/'+currentChat.id : 'dms/'+currentChat.id;
+        window._dbFns.push(window._dbFns.ref(window._db, dbPath), msgData);
+        input.value = '';
+      }
+    );
+  } catch(e) { placeholder.remove(); showToast('Помилка: ' + e.message); }
+}
+
+function openLightbox(url) {
+  document.getElementById('lightbox-img').src = url;
+  document.getElementById('lightbox').classList.add('open');
+}
 
 // ═══════════════════════════
 // PUSH NOTIFICATIONS
