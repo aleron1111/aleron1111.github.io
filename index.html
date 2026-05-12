@@ -1031,7 +1031,7 @@ function buildRooms() {
     const d = document.createElement('div');
     d.className = 'ui'+(currentChat?.id===r.id?' active':'');
     d.onclick = ()=>openRoom(r);
-    d.innerHTML = `<div class="ua av0">${r.emoji}</div><div class="um"><div class="un">${r.name}</div><div class="up">${r.desc}</div></div>`;
+    d.innerHTML = `<div class="ua av0">${esc(r.emoji)}</div><div class="um"><div class="un">${esc(r.name)}</div><div class="up">${esc(r.desc)}</div></div>`;
     rl.appendChild(d);
   });
 }
@@ -1044,7 +1044,7 @@ function buildBots() {
     const d = document.createElement('div');
     d.className = 'ui'+(currentChat?.id===b.id?' active':'');
     d.onclick = ()=>openBot(b);
-    d.innerHTML = `<div class="ua ${AVC[b.col]}">${b.emoji}</div><div class="um"><div class="un">${b.name} <span style="font-size:.64rem;color:var(--accent);font-weight:700">AI</span></div><div class="up">${b.desc}</div></div>`;
+    d.innerHTML = `<div class="ua ${AVC[b.col]}">${esc(b.emoji)}</div><div class="um"><div class="un">${esc(b.name)} <span style="font-size:.64rem;color:var(--accent);font-weight:700">AI</span></div><div class="up">${esc(b.desc)}</div></div>`;
     bl.appendChild(d);
   });
 }
